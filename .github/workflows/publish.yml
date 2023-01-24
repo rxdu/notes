@@ -17,7 +17,7 @@ jobs:
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y python3-pip && \
-          pip install mkdocs-material mkdocs-awesome-pages-plugin
+          pip3 install mkdocs-material mkdocs-awesome-pages-plugin
 
       - name: Deploy docs
         run: mkdocs gh-deploy
