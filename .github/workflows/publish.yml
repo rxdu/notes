@@ -15,9 +15,13 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v3
 
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y python3-pip && \
-          pip3 install mkdocs-material mkdocs-awesome-pages-plugin
+        run: pip install mkdocs-material mkdocs-awesome-pages-plugin
 
       - name: Deploy docs
         run: mkdocs gh-deploy
