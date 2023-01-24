@@ -1,0 +1,5 @@
+nav:
+    - Tutorial: tutorial.md
+    - Course: course.md
+    - Tech Blog: blog.md
+    - Coding Interview: interview.md

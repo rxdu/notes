@@ -1,0 +1,8 @@
+nav:
+    - Home: index.md
+    - System: 'system'
+    - Hardware: 'hardware'
+    - Program: 'program'
+    - Robotics: 'robotics'
+    - HOWTOs: 'howtos'
+    - Resource: 'resource'

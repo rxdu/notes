@@ -1,0 +1,6 @@
+nav:
+    - sensing.md
+    - planning.md
+    - control.md
+    - simulation.md
+    - reference.md
