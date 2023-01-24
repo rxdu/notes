@@ -1,8 +1,9 @@
 nav:
+    # - 'Return to Main Page': 'https://rdu.im'
     - Home: index.md
     - System: 'system'
     - Hardware: 'hardware'
-    - Program: 'program'
+    - Programming: 'programming'
     - Robotics: 'robotics'
     - HOWTOs: 'howtos'
     - Resource: 'resource'
