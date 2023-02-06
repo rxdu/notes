@@ -1,7 +1,4 @@
----
-title: Flash Jetson with SDK Manager in Docker
-description: How to flash Jetson Device with Docker image
----
+# Flash Jetson with SDK Manager in Docker
 
 For older Jetson boards (such as TX2) that only supports Jetpack 4.x, normally you will need to have a SDK manager in a native Ubuntu 18.04 system to flash the system. Otherwise, you can try to [use virtual machine (virtualbox) to flash the board](/tech-notes/system/jetson/flash-jetson-with-vm). But it's not guaranteed to work. This is the case for TX2 + Orbitty carrier board I recently tried. One more method is to use the docker image provided by Nvidia. Here are the steps to do it:
 

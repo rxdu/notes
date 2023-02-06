@@ -1,7 +1,4 @@
----
-title: Docker Command Reference
-description: Most commonly used docker commands
----
+# Docker Command Reference
 
 ## Create/start/stop a Container
 

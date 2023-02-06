@@ -1,7 +1,4 @@
----
-title: Online Courses
-description: 
----
+# Online Courses
 
 ## Open Course
 

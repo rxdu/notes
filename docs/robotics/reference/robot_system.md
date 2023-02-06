@@ -1,7 +1,4 @@
----
-title: Robot Implementation
-description: 
----
+# Robot Implementation
 
 ## Unmanned Aerial Vehicle (UAV)
 

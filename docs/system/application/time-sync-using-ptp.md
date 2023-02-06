@@ -1,7 +1,4 @@
----
-title: Time Synchronization using PTP/IEEE1588
-description: PTP/IEEE1588 protocol for time synchronization
----
+# Time Synchronization using PTP/IEEE1588
 
 Recently I've been using an Ouster OS1-64 lidar on a mobile robot for 3D mapping and navigation. To get the right timestamp for the pointcloud to be used with other parts of ROS, a PTP grandmaster needs to be configured.
 

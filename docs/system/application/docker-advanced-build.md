@@ -1,7 +1,4 @@
----
-title: Advanced Docker Build
-description: More advanced techniques for building docker images
----
+# Advanced Docker Build
 
 ## Conditional Build
 

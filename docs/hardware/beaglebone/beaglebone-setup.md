@@ -1,7 +1,4 @@
----
-title: Beaglebone Setup
-description: Basic setup for Beaglebone
----
+# Beaglebone Setup
 
 ## Flash Image to eMMC
 

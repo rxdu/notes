@@ -1,7 +1,4 @@
----
-title: Using Valgrind
-description: A brief tutorial for using valgrind to check memory issues
----
+# Using Valgrind
 
 Valgrind is a powerful toolset that can help to debug programs especially for memory-related issues.
 

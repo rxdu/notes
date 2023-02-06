@@ -1,7 +1,4 @@
----
-title: Check Linux Disk Usage
-description: Find files that are taking up the disk space
----
+# Check Linux Disk Usage
 
 You may have encountered the situation that your Linux system is running out of space. This happens more often on embedded devices running on a small eMMC or SD card. To cleanup the system, you first need to find out what is taking up the space. 
 

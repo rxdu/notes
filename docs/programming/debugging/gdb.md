@@ -1,7 +1,4 @@
----
-title: Using GDB Debugger
-description: A brief tutorial for using GDB to debug your program
----
+# Using GDB Debugger
 
 ## Introduction
 

@@ -56,7 +56,7 @@ $ sudo systemctl disable dhcpcd.service
 $ sudo systemctl enable wpa_supplicant.service
 ```
 
-Reference:
+## Reference:
 
 * https://raspberrypi.stackexchange.com/questions/66431/headless-pi-zero-ssh-access-over-usb
 * https://learn.adafruit.com/turning-your-raspberry-pi-zero-into-a-usb-gadget/ethernet-gadget

@@ -1,7 +1,4 @@
----
-title: Watchlist
-description: 
----
+# Watchlist
 
 ## Network
 

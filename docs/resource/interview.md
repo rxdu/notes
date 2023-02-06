@@ -1,7 +1,4 @@
----
-title: Coding Interview Problems
-description: 
----
+# Coding Interview Problems
 
 ## Reference
 

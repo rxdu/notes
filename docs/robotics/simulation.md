@@ -1,7 +1,4 @@
----
-title: Simulation
-description: 
----
+# Simulation
 
 ## Basics
 

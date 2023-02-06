@@ -1,7 +1,4 @@
----
-title: Create SSH Key
-description: How to create SSH key pair in Linux
----
+# Create SSH Key
 
 Create key pair using different algorithms
 

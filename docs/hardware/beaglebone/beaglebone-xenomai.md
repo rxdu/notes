@@ -1,7 +1,4 @@
----
-title: Xenomai on Beaglebone
-description: Build xenomai for Beaglebone
----
+# Xenomai on Beaglebone
 
 Build Xenomai-patched Linux for Beaglebone Black[1]. The general building steps for other ARM-based boards should be similar but specific details related to hardware can be drastically different.
 

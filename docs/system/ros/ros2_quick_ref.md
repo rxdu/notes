@@ -1,7 +1,4 @@
----
-title: ROS2 CLI Reference
-description: 
----
+# ROS2 CLI Reference
 
 ## Environment Variables
 

@@ -1,7 +1,4 @@
----
-title: Sensing
-description: 
----
+# Sensing
 
 ## SLAM
 

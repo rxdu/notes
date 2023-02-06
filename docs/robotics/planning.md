@@ -1,7 +1,4 @@
----
-title: Planning
-description: 
----
+# Planning
 
 ## Computational Geometry
 

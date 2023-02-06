@@ -1,7 +1,4 @@
----
-title: Recover STM32 SWD
-description: How to recover SWD pins using JLink
----
+# Recover STM32 SWD
 
 It's possible to disable the SWD pins by accident and the SWD interface will become unavailable after a successful flashing. This happened to me a few times when I used STM32CubeMX to generate driver code and forgot to enable the "Serial Wire" debug interface in the "System Core/SYS" section. The following solution is provided by Andre Belanger for solving the Apollo 2 EVB and it should also work for other similar MCUs. (Tested with STM32F405RG)
 

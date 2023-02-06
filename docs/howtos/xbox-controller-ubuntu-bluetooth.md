@@ -1,7 +1,4 @@
----
-title: Connect Xbox One Controller to Ubuntu via Bluetooth
-description: xbox controller bluetooth
----
+# Connect Xbox One Controller to Ubuntu via Bluetooth
 
 If the required driver module doesn't load automatically, the xbox one controller won't connect to Ubuntu reliably. In this case, you can load the module manually
 

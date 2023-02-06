@@ -1,7 +1,4 @@
----
-title: ROS2 Launch
-description: 
----
+# ROS2 Launch
 
 ## Concepts
 

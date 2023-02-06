@@ -1,7 +1,4 @@
----
-title: Share Internet through the USB Port on Pocketbeagle
-description: pocketbeagle ethernet-over-usb
----
+# Share Internet through the USB Port on Pocketbeagle
 
 On the host computer, there are two interfaces invoved: 
 

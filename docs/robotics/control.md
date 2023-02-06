@@ -1,7 +1,4 @@
----
-title: Control
-description: 
----
+# Control
 
 ## Foundation
 

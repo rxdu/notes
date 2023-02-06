@@ -1,7 +1,4 @@
----
-title: Tech Blogs
-description: 
----
+# Tech Blogs
 
 ## Robotics
 

@@ -1,7 +1,4 @@
----
-title: Boot Jetson TX2/Nano from MicroSD Card
-description: boot l4t system from SD card
----
+# Boot Jetson TX2/Nano from MicroSD Card
 
 This note may be useful if you're using a Jetson Nano/TX2 production module with 16G eMMC but want to boot from an SD card for more space.
 

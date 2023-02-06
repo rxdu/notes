@@ -1,7 +1,4 @@
----
-title: Books in Robotics
-description: 
----
+# Books in Robotics
 
 ## Mathematics
 

@@ -1,7 +1,4 @@
----
-title: Wireguard Setup on AWS
-description: Instructions on setting up Wireguard on AWS
----
+# Wireguard Setup on AWS
 
 ## Tested Environment
 

@@ -1,7 +1,4 @@
----
-title: Flash Jetson Device with Virtualbox
-description: How to flash Jetson Device with Virtualbox
----
+# Flash Jetson Device with Virtualbox
 
 **NOTE** The method described here is not reliable. In my case, it worked with Xavier NX dev kit but didn't work with the TX2 + Orbitty carrier board.
 

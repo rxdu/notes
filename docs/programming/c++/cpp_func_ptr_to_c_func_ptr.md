@@ -1,7 +1,4 @@
----
-title: Convert C++ Function Pointer to C Function Pointer
-description: 
----
+# Convert C++ Function Pointer to C Function Pointer
 
 Sometimes, you may want to pass a C++ member function as the callback function to a C library API function. Likely people will tell you it's only possible if the member function is static. But here is one possible solution  
 
