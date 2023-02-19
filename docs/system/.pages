@@ -1,5 +1,6 @@
 nav:
     - foundation
     - linux
-    - application
+    - network
+    - docker
     - ROS: ros

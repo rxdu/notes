@@ -2,5 +2,5 @@ nav:
     - sensing.md
     - planning.md
     - control.md
-    - simulation.md
+    - Simulation: simulation
     - reference.md

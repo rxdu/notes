@@ -1,8 +1,4 @@
-# Simulation
-
-## Basics
-
-* [How A Simulator Works](/tech-notes/robotics/simulation/how_a_simulator_works)
+# Reference
 
 ## Reference
 
