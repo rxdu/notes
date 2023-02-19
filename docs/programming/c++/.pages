@@ -1,3 +1,4 @@
 nav:
     - C++ Resource: cpp_resource.md
+    - asio: asio.md
     - cpp_func_ptr_to_c_func_ptr.md

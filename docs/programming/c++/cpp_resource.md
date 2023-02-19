@@ -4,6 +4,7 @@
 
 * [GDB Notes](/tech-notes/program/debugging/gdb)
 * [Valgrind Notes](/tech-notes/program/debugging/valgrind)
+* [RR](https://rr-project.org/)
 
 ## Technique & Trick
 
