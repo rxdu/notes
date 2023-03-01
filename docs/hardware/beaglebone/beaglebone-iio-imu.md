@@ -218,3 +218,5 @@ debian@beaglebone:/sys/bus/iio/devices/iio:device1$ cat in_accel_z_raw
 
 * [1] https://wiki.analog.com/resources/tools-software/linux-drivers/iio-inertial-measurement-units/adis16475#trigger_management
 * [2] https://events19.linuxfoundation.org/wp-content/uploads/2017/12/Bandan-Das_Drone_SITL_bringup_with_the_IIO_framework.pdf
+* [3] https://github.com/STMicroelectronics/st-mems-android-linux-drivers-iio
+* [4] https://www.kernel.org/doc/html/v5.10/driver-api/iio/index.html
