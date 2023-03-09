@@ -88,6 +88,45 @@ To configure the service to auto-restart, you can use the following options [2]:
 * **RestartSec=**: the amount of time to wait before attempting to restart the service
 * **TimeoutSec=**: the amount of time that systemd will wait when stopping or stopping the service before marking it as failed or forcefully killing it
 
+## Examples
+
+* Systemd service unit to start a hardware interface
+
+```
+[Unit]
+Description=Bringup CAN interface
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/sbin/modprobe can
+ExecStart=/sbin/ip link set can0 up type can bitrate 500000
+ExecStop=/sbin/ip link set can0 down
+
+[Install]
+WantedBy=network-online.target
+```
+
+* Systemd service unit for starting a docker compose application
+
+```
+[Unit]
+Description=Sample Service
+Requires=docker.service udev.service
+After=docker.service udev.service
+
+[Service]
+WorkingDirectory=/home/username/docker/app
+ExecStart=/usr/bin/docker compose up
+ExecStop=/usr/bin/docker compose down
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ## Reference
 
 * [1] https://wiki.archlinux.org/title/systemd

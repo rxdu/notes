@@ -19,10 +19,9 @@ Add the following lines
 ```bash
 auto can0
     iface can0 inet manual
-    pre-up /sbin/ip link set can0 type can bitrate 1000000 
-    up /sbin/ifconfig can0 up
-    post-up /sbin/ip link set can0 txqueuelen 10000
-    down /sbin/ifconfig can0 down
+    up /sbin/ip link set can0 up type can bitrate 1000000 
+    post-up /sbin/ip link set can0 txqueuelen 1000
+    down /sbin/ip link set can0 down
 ```
 
 You can check if CAN is brought up by using command "ifconfig". You should see something similar to this
