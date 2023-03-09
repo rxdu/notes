@@ -1,6 +1,6 @@
 # Journalctl Reference
 
-## List Journal Entries from the Current Boot
+## List Journal Entries from Boot
 
 * List logs from current boot
 
@@ -94,6 +94,6 @@ RuntimeMaxFileSize=: Specifies the amount of space that an individual journal fi
 
 ## Reference
 
-* [1] https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs
-* [2] https://www.loggly.com/ultimate-guide/using-journalctl/
-* [3] https://www.loggly.com/ultimate-guide/linux-logging-with-systemd/
+* [1] [https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
+* [2] [https://www.loggly.com/ultimate-guide/using-journalctl/](https://www.loggly.com/ultimate-guide/using-journalctl/)
+* [3] [https://www.loggly.com/ultimate-guide/linux-logging-with-systemd/](https://www.loggly.com/ultimate-guide/linux-logging-with-systemd/)
