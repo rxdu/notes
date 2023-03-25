@@ -1,4 +1,5 @@
 nav:
+    - Foundation: foundation
     - sensing.md
     - planning.md
     - control.md
