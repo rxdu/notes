@@ -114,6 +114,60 @@ Roll, pitch, yaw angles can be seen as a special case of Euler angles. In roboti
 
 Axis/angle representation used the rotation angle around an arbitrary axis to represent a rotation and is often used to create other types of representations.
 
+#### Quaternion
+
+Quaternion representation is widely used for computation of 3D rotations. It is given in the form 
+
+\[
+    \vec{q} = w + x\vec{i} + y\vec{j} + z\vec{k}, \textnormal{or}\;\; \vec{q} = (w,x,y,z) = (w, \vec{v})
+\]
+
+The basis $\vec{i},\vec{j},\vec{k}$ follow the following rules:
+
+\[
+\begin{align*}
+ij &= -ji = k \\
+jk &= -kj = i \\
+ki &= -ik = j \\
+i^2 = j^2 &= k^2 = ijk = -1
+\end{align*}
+\]
+
+Generally the quaternions we use to describe orientations are unit quaternions, i.e. $\| q \| = \sqrt{w^2 + x^2 + y^2 + z^2} = 1$. A non-unit quaternion can be normalized by 
+
+\[
+    \hat{q} = \frac{q}{\| q \|}
+\]
+
+Note that "matrices represent linear transforms; quaternions represent a special case of linear transform: rotations in 3 dimensions"[4]. 
+
+In addition to the quaternion itself, we have:
+
+* Quaternion Conjugate: $q^{*} = (w, -\vec{v})$
+* Quaternion Inverse: $q^{-1} = \frac{q^{*}}{{\| q \|}^2}$, for unit quaternion, we have $q^{*} = q^{-1}$
+
+The following operations are frequently used:
+
+* A point or vector $\vec{v}$ can be rotated by a quaternion $q$ by operation
+
+\[
+\vec{v}^{\prime} = q\vec{v}q^{-1}
+\]
+
+* An orientation $O$ can be rotated by a quaterion $q$ by operation
+
+\[
+O^{\prime} = qO
+\]
+
+* Multiple rotations can be composed by multiply the quatenion from the left (pre-multiply), for example, $O^\prime$ is the orientation as if $q_1$ were applied to $O$, then $q_2$, then $q_3$
+
+\[
+O^{\prime} = q_3q_2q_1O
+\]
+
+Quaternions can be used to do the calculation efficiently but are not so intuitive to understand. Reference [3] and [5] are highly recommended if more details are required. 
+
 ### Composition of Rotations
 
 A summary of the rule of composition of rotational transformations can be found in [1]:
@@ -198,3 +252,6 @@ H^0_2 = HH^0_1
 
 * [1] Spong, M.W. and Hutchinson, S. and Vidyasagar, M. (2005). Robot Modeling and Control. Wiley.
 * [2] Lynch, K. M., & Park, F. C. (2017). Modern Robotics: Mechanics, Planning, and Control. Cambridge Univeristy Press.
+* [3] https://eater.net/quaternions
+* [4] https://www.anyleaf.org/blog/quaternions:-a-practical-guide
+* [5] https://www.3dgep.com/understanding-quaternions/
