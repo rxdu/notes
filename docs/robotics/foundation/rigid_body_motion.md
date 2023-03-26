@@ -248,6 +248,55 @@ H^0_2 = H^0_1H^1_2
 H^0_2 = HH^0_1   
 \]
 
+## Rigid-body Motion Calculation with Eigen
+
+More relevant details can be found from Eigen offical documentation page [6][7][8] and this tutorial [9]. Here I only keep the most frequently used use cases. Source code in this section can be found on this [GitHub repo](https://github.com/rxdu/eigen_sample).
+
+The type "Vector3f" is a column vector in Eigen, thus it can be used directly to represent a position. Eigen also provides data types to present a rotation matrix, axis-angle and quaternion.
+
+### Pose Representation with Eigen
+
+Examples for the pose (position and orientation) representation with Eigen:
+
+```cpp
+Eigen::Vector2d p2d(1.0, 2.0);
+std::cout << "A point in 2d: \n" << p2d << std::endl;
+
+Eigen::Vector3d p3d(1.0, 2.0, 3.0);
+std::cout << "A point in 3d: \n" << p3d << std::endl;
+
+Eigen::Matrix3d R;
+R << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+std::cout << "A rotation matrix: \n" << R << std::endl;
+
+Eigen::Quaterniond q_from_R(R);
+std::cout << "A quaternion from rotation matrix: \n" << q_from_R.coeffs() << std::endl;
+
+Eigen::Quaterniond q_unit = Eigen::Quaterniond::Identity();
+std::cout << "A unit quaternion: \n" << q_unit.coeffs() << std::endl;
+
+Eigen::Quaterniond q(2, 0, 1, -3);
+std::cout << "A non-normalized quaternion: \n" << q.coeffs() << std::endl;
+
+q.normalize();
+std::cout << "A normalized quaternion: \n" << q.w() << std::endl << q.vec() << std::endl;
+
+Eigen::Matrix3d R_from_q = q.toRotationMatrix();
+std::cout << "A rotation matrix from quaternion: \n" << R_from_q << std::endl;
+
+Eigen::Matrix3f R_from_angleaxis;
+R_from_angleaxis = Eigen::AngleAxisf(0.25 * M_PI, Eigen::Vector3f::UnitX())
+    * Eigen::AngleAxisf(0.5 * M_PI, Eigen::Vector3f::UnitY())
+    * Eigen::AngleAxisf(0.33 * M_PI, Eigen::Vector3f::UnitZ());
+std::cout << "A rotation matrix from angle-axis: \n" << R_from_angleaxis << std::endl;
+
+Eigen::Quaternionf q_from_angleaxis(Eigen::AngleAxisf(0.33 * M_PI, Eigen::Vector3f::UnitZ()));
+std::cout << "A quaternion from angle-axis: \n" << q_from_angleaxis.coeffs() << std::endl;
+```
+
+### Transformation with Eigen
+
+
 ## Reference
 
 * [1] Spong, M.W. and Hutchinson, S. and Vidyasagar, M. (2005). Robot Modeling and Control. Wiley.
@@ -255,3 +304,7 @@ H^0_2 = HH^0_1
 * [3] https://eater.net/quaternions
 * [4] https://www.anyleaf.org/blog/quaternions:-a-practical-guide
 * [5] https://www.3dgep.com/understanding-quaternions/
+* [6] https://eigen.tuxfamily.org/dox/group__QuickRefPage.html
+* [7] https://eigen.tuxfamily.org/dox/group__TutorialGeometry.html
+* [8] https://eigen.tuxfamily.org/dox/group__TutorialMatrixClass.html
+* [9] https://www.cc.gatech.edu/classes/AY2015/cs4496_spring/Eigen.html
