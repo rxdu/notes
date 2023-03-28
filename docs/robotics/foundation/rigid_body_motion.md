@@ -58,7 +58,7 @@ The properties of a rotation matrix $R$:
 
 * $R \in \mathcal{SO}(n)$
 * $R^{-1} \in \mathcal{SO}(n)$
-* $ R^{-1} = R^T$
+* $R^{-1} = R^T$
 * The columns (and therefore the rows) of $R$ are mutually orthogonal
 * Each column (and therefore each row) of $R$ is a unit vector
 * $\det{R} = 1$
@@ -252,9 +252,59 @@ H^0_2 = HH^0_1
 
 More relevant details can be found from Eigen offical documentation page [6][7][8] and this tutorial [9]. Here I only keep the most frequently used use cases. Source code in this section can be found on this [GitHub repo](https://github.com/rxdu/eigen_sample).
 
-The type "Vector3f" is a column vector in Eigen, thus it can be used directly to represent a position. Eigen also provides data types to present a rotation matrix, axis-angle and quaternion.
+### Basic Operations of Matrices/Vectors
+
+```cpp
+// matrix transpose and inverse
+Eigen::MatrixXd R(3, 3);
+R << 1, 2, 1,
+    2, 3, 4,
+    3, 1, 5;
+
+// element access
+// note: matrix index (row, column), index starts from 0
+std::cout << "R(0,0) = " << R(0, 0) << std::endl;
+std::cout << "R(1,2) = " << R(1, 2) << std::endl;
+std::cout << "R(2,2) = " << R(2, 2) << std::endl;
+
+Eigen::MatrixXd R_block = R.block(1, 1, 2, 2);
+std::cout << "Take sub-matrix: \n" << R_block << std::endl;
+
+Eigen::MatrixXd R_row = R.row(1);
+std::cout << "Take row: \n" << R_row << std::endl;
+
+Eigen::MatrixXd R_col = R.col(0);
+std::cout << "Take column: \n" << R_col << std::endl;
+
+// multiplication
+Eigen::Matrix3d R2 = Eigen::Matrix3d::Identity();
+auto R3 = R * R2;
+std::cout << "R * R2: \n" << R3 << std::endl;
+
+// transpose and inverse
+Eigen::MatrixXd R_transpose = R.transpose();
+Eigen::MatrixXd R_inverse = R.inverse();
+
+std::cout << "R: \n" << R << std::endl;
+std::cout << "R_transpose: \n" << R_transpose << std::endl;
+std::cout << "R_inverse: \n" << R_inverse << std::endl;
+
+// dot product and cross product:
+Eigen::Vector3d v(1, 2, 3);
+Eigen::Vector3d w(0, 1, 2);
+
+double v_dot_w = v.dot(w);
+Eigen::Vector3d v_cross_w = v.cross(w);
+
+std::cout << "v: \n" << v << std::endl;
+std::cout << "w: \n" << w << std::endl;
+std::cout << "v_dot_w: \n" << v_dot_w << std::endl;
+std::cout << "v_cross_w: \n" << v_cross_w << std::endl;
+```
 
 ### Pose Representation with Eigen
+
+The type "Vector3f" is a column vector in Eigen, thus it can be used directly to represent a position. Eigen also provides data types to present a rotation matrix, axis-angle and quaternion.
 
 Examples for the pose (position and orientation) representation with Eigen:
 
