@@ -1,5 +1,5 @@
 nav:
-    - Foundation: foundation
+    - Modeling: modeling
     - sensing.md
     - planning.md
     - control.md
