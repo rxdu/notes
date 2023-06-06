@@ -24,25 +24,12 @@ Typically you want the permissions to be:
 To access Github repositories with a SSH key, you may add the following config to ~/.ssh/config
 
 ```bash
-Host *
-  IdentitiesOnly=yes
-
 Host github.com
-HostName github.com
-PreferredAuthentications publickey
-IdentityFile ~/.ssh/<your-ssh-key-file-name>
+  HostName github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/<your-ssh-key-file-name>
+  IdentitiesOnly=yes
 ```
-
-If you have multiple Github accounts, you could add the second account like this
-
-```bash
-Host <2nd-name>.github.com
-HostName github.com
-PreferredAuthentications publickey
-IdentityFile ~/.ssh/<your-2nd-ssh-key-file-name>
-```
-
-Then you can add "<2nd-name>" to the github ssh url in order to push or pull.
 
 ## Reference
 
