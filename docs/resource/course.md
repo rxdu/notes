@@ -16,6 +16,9 @@
 * Udacity
 	- Artificial Intelligence for Robotics: Programming a Robotic Car, Sebastian Thrun, Standford University  
         https://www.udacity.com/course/cs373
+
+* Online Robotics
+    - https://github.com/brunoeducsantos/robotics_master
 		
 	
 ## University Course
