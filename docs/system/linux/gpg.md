@@ -169,8 +169,73 @@ $ gpg --import <key-file>
 $ gpg --recv-keys <key-id>
 ```
 
+## Extend Key Expiration Date
+
+You can modify the expiration date for both the primary key (0) and subkey (1). Read more about subkeys here [4].
+
+```
+$ gpg --pinentry-mode=loopback --edit-key <key-id>
+gpg> key 0
+gpg> expire
+# enter new date and confirm
+gpg> key 1
+gpg> expire
+# enter new date and confirm
+gpg> save
+```
+
+Example:
+
+```
+$ gpg --pinentry-mode=loopback --edit-key 713107D9E065DBCE
+gpg (GnuPG) 2.2.27; Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Secret key is available.
+
+sec  ed25519/713107D9E065DBCE
+     created: 2023-06-22  expires: 2024-06-21  usage: SC  
+     trust: ultimate      validity: ultimate
+ssb  cv25519/FCFBABCEE6D345D4
+     created: 2023-06-22  expires: 2024-06-21  usage: E   
+[ultimate] (1). Ruixiang Du (test keygen) <ruixiang.du@westonrobot.com>
+gpg> key 0
+
+sec  ed25519/713107D9E065DBCE
+     created: 2023-06-22  expires: 2024-06-21  usage: SC  
+     trust: ultimate      validity: ultimate
+ssb  cv25519/FCFBABCEE6D345D4
+     created: 2023-06-22  expires: 2023-06-23  usage: E   
+[ultimate] (1). Ruixiang Du (test keygen) <ruixiang.du@westonrobot.com>
+
+gpg> expire
+Changing expiration time for the primary key.
+Please specify how long the key should be valid.
+         0 = key does not expire
+      <n>  = key expires in n days
+      <n>w = key expires in n weeks
+      <n>m = key expires in n months
+      <n>y = key expires in n years
+Key is valid for? (0) 1
+Key expires at Fri 23 Jun 2023 03:10:59 PM +08
+Is this correct? (y/N) y
+
+sec  ed25519/713107D9E065DBCE
+     created: 2023-06-22  expires: 2023-06-23  usage: SC  
+     trust: ultimate      validity: ultimate
+ssb  cv25519/FCFBABCEE6D345D4
+     created: 2023-06-22  expires: 2023-06-23  usage: E   
+[ultimate] (1). Ruixiang Du (test keygen) <ruixiang.du@westonrobot.com>
+
+gpg: WARNING: Your encryption subkey expires soon.
+gpg: You may want to change its expiration date too.
+gpg> save
+```
+
 ## Reference
 
 * [1] https://www.linuxbabe.com/security/a-practical-guide-to-gpg-part-1-generate-your-keypair
 * [2] https://superuser.com/questions/814355/what-file-extensions-should-be-used-on-gpg-generated-output
 * [3] https://www.linuxbabe.com/security/gpg-guide-public-key-management
+* [4] https://wiki.debian.org/Subkeys
