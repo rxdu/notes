@@ -12,6 +12,9 @@
 
 ## Library & Framework
 
+**Process Management**
+* [tiny process library](https://gitlab.com/eidheim/tiny-process-library)
+
 **Parallel Computing**
 
 * [OpenACC](https://www.openacc.org/sites/default/files/inline-files/OpenACC_Programming_Guide_0_0.pdf): https://www.openacc.org/get-started

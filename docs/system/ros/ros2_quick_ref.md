@@ -199,6 +199,15 @@ $ colcon build --symlink-install --packages-above <package_name>
 
 The "--symlink-install" option is to create a symlink to the build directory instead of copying the files. "This allows the installed files to be changed by changing the files in the source space (e.g. Python files or other not compiled resourced) for faster iteration."
 
+### Check dependencies
+
+```bash
+# generate a graph of package dependencies
+$ colcon graph --dot --packages-up-to <package_name> | dot -Tpng -o graph.png
+# generate a list of dependencies
+$ colcon list --packages-up-to <package_name> --names-only
+```
+
 ### Run tests
 
 ```bash
