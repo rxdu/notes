@@ -71,6 +71,23 @@ In the [Unit] section, you can specify dependencies of the service:
 
 "Note that Wants= and Requires= do not imply After=, meaning that if After= is not specified, the two units will be started in parallel."[1]
 
+If you need to wait for a hardware to be ready before your service, you can use the following command to check if the device is managed by systemd:
+
+```
+$ systemctl list-units
+# for example, if you want to wait for usb0
+$ systemctl list-units | grep ttyAMA1
+```
+
+You may find a unit like: "sys-devices-platform-soc-fe201600.serial-tty-ttyAMA1.device". Then in your unit section you can specify the dependency:
+
+```
+[Unit]
+Description=Example service that requires ttyAMA1
+Requires=sys-devices-platform-soc-fe201600.serial-tty-ttyAMA1.device
+After=sys-devices-platform-soc-fe201600.serial-tty-ttyAMA1.device
+```
+
 ### [Service] Secion
 
 In the [Service] secion, you can specify what the service does.
