@@ -90,9 +90,21 @@ Hardware Receive Filter Modes: none
 $ sudo phc_ctl eth0 cmp
 ```
 
-## Useful Documentation
+## PTP Profiles
 
+The following table is taken from [4] by peci1 published on ROS Discourse:
 
+|       Profile        | BMCA  | Delay mech. | Layer |   
+| :------------------: | :---: | :---------: | :---: | 
+|       Default        |  Yes  |   P2P/E2E   | L2/L3 | 
+|  gPTP (802.1AS) 17   |  Yes  |     P2P     |  L2   |  
+| Automotive        10 |  No   |     P2P     |  L2   |   
+|      Autosar 9       |  No   |     P2P     |  L2   |  
+|        LXI 1         |  Yes  |     P2P     |  L3   |   
+|  IEC 62439-3 L2P2P   |  Yes  |     P2P     |  L2   |    
+|  IEC 62439-3 L3E2E   |  Yes  |     E2E     |  L3   |   
+|    Power Profile     |  Yes  |     P2P     |  L2   |   
+|    GigE Vision 11    |  Yes  |   P2P/E2E   |   ?   |   
 
 ## Relevant Projects
 
@@ -100,6 +112,7 @@ $ sudo phc_ctl eth0 cmp
 
 ## Reference
 
-* [Ouster Sensor Docs (wiki)](https://static.ouster.dev/sensor-docs/index.html)
-* [Ouster Lidar Software User Manual](https://data.ouster.io/downloads/software-user-manual/software-user-manual-v2p0.pdf)
-* [PTP for Mobile Robots](https://discourse.ros.org/t/experience-with-ptp-precision-time-protocol-for-mobile-robots/24707)
+* [1] [Ouster Sensor Docs (wiki)](https://static.ouster.dev/sensor-docs/index.html)
+* [2] [Ouster Lidar Software User Manual](https://data.ouster.io/downloads/software-user-manual/software-user-manual-v2p0.pdf)
+* [3] [PTP for Mobile Robots](https://discourse.ros.org/t/experience-with-ptp-precision-time-protocol-for-mobile-robots/24707)
+* [4] [Combining PTP with NTP to Get the Best of Both Worlds](https://www.redhat.com/en/blog/combining-ptp-ntp-get-best-both-worlds) 
