@@ -4,4 +4,5 @@ nav:
     - planning.md
     - control.md
     - Simulation: simulation
+    - ROS: ros
     - reference.md

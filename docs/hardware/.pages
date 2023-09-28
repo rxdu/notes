@@ -2,3 +2,5 @@ nav:
     - jetson
     - raspberrypi
     - beaglebone
+    - camera
+  

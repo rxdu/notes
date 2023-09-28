@@ -1,6 +1,6 @@
 nav:
-    - foundation
+    - basics
     - linux
     - network
     - docker
-    - ROS: ros
+    - cloud

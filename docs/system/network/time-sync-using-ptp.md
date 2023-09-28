@@ -142,6 +142,10 @@ $ sudo phc_ctl eth0 cmp
 
 * [TSN Documentation Project for Linux](https://tsn.readthedocs.io/index.html)
 
+## Hardware Support
+
+* https://botblox.io/collections/frontpage
+
 ## Reference
 
 * [1] [Ouster Sensor Docs (wiki)](https://static.ouster.dev/sensor-docs/index.html)
@@ -150,3 +154,4 @@ $ sudo phc_ctl eth0 cmp
 * [4] [Combining PTP with NTP to Get the Best of Both Worlds](https://www.redhat.com/en/blog/combining-ptp-ntp-get-best-both-worlds) 
 * [5] [Synchronize to PTP or NTP Time Using timemaster](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/sec-synchronize_to_ptp_or_ntp_time_using_timemaster)
 * [6] [Synchronizing Time with Linux PTP](https://tsn.readthedocs.io/timesync.html#checking-clocks-synchronization)
+* [7] [Multi-robot coordination: Distributed synchronization of industrial robots through ROS 2](https://discourse.ros.org/t/multi-robot-coordination-distributed-synchronization-of-industrial-robots-through-ros-2/9288)

@@ -5,14 +5,12 @@
 * [GDB Notes](/tech-notes/program/debugging/gdb)
 * [Valgrind Notes](/tech-notes/program/debugging/valgrind)
 * [RR](https://rr-project.org/)
-
-## Technique & Trick
-
-* [Convert C++ Function Pointer to C Function Pointer](/tech-notes/program/cpp/cpp_func_ptr_to_c_func_ptr)
+* [LTTng](https://lttng.org/)
 
 ## Library & Framework
 
 **Process Management**
+
 * [tiny process library](https://gitlab.com/eidheim/tiny-process-library)
 
 **Parallel Computing**
@@ -30,10 +28,14 @@
 * [WebRTC streamer for Raspberry PI](https://github.com/kclyu/rpi-webrtc-streamer)
 * [UV4L](https://www.linux-projects.org/uv4l/)
 
-Reference: 
 
-* [P2P Between Computers behind NAT](https://stackoverflow.com/questions/26267599/make-a-connection-between-two-computers-behind-nat)
+**Communication**
+
+* [libmodbuspp](https://github.com/epsilonrt/libmodbuspp)
 
 ## Reference Documentation
 
 * C++ FAQ: https://isocpp.org/faq
+* Asio tutorial: https://dens.website/tutorials/cpp-asio
+* [P2P Between Computers behind NAT](https://stackoverflow.com/questions/26267599/make-a-connection-between-two-computers-behind-nat)
+* [Guide to Implementing Communication Protocols in C++ (for Embedded Systems)](https://commschamp.github.io/comms_protocols_cpp/)
