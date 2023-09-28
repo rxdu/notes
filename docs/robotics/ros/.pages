@@ -1,5 +1,5 @@
 nav:
-    - ROS2 Quick Reference: ros2_quick_ref.md
+    - ROS2 CLI Reference: ros2_cli_ref.md
     - ROS2 Code Sample: ros2_code_sample.md
     - ROS2 Launch: ros2_launch.md
     - ROS2 With Clion: ros2_with_clion.md
