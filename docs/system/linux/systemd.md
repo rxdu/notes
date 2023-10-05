@@ -16,6 +16,12 @@ $ sudo systemctl [start/stop/restart/status/enable/disable] <service-name>
 
 To enable a service means that the service will be started at boot time.
 
+* To check boot time of all the services
+
+```bash
+$ sudo systemd-analyze blame
+``````
+
 * To check the log of a service
 
 ```bash
