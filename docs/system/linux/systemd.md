@@ -94,7 +94,7 @@ Requires=sys-devices-platform-soc-fe201600.serial-tty-ttyAMA1.device
 After=sys-devices-platform-soc-fe201600.serial-tty-ttyAMA1.device
 ```
 
-### [Service] Secion
+### [Service] Section
 
 In the [Service] secion, you can specify what the service does.
 
