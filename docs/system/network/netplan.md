@@ -1,84 +1,32 @@
 # Netplan Reference
 
-## Network Configuration Command: "ip"
+## What is Netplan
 
-On Ubuntu 22.04 server, you don't get "ifconfig" command by default (it's the case at least on the version for Raspberry Pi). Instead, you have "ip" command out-of-box. "ip" is starting to replace "ifconfig" in newer Linux distributions.
+Since Ubuntu 20.04, "netplan" is used to manage network interfaces. You can treat netplan as a frontend of network managers. The diagram from the official documentation illustrates this idea very clearly:
 
-You can still install ifconfig if it's not present in the system:
+![](./figures/netplan_design_overview.png)
 
-```bash
-$ sudo apt-get install net-tools
-```
+You configure the interfaces with the netplan config files and netplan will render the config files to the backend configs for the programs that actually manages the interface. Currently the two supported backend managers are **systemd-networkd** and **Network Manager**. 
 
-Similarly, you can manually install the ip tool:
+**Note**: systemd-networkd and Network Manager are not the only two network managers in the Linux world. You may find other network managers such as Wicd, ConnMan in other Linux distributions. Raspberry Pi OS uses dhcpcd to manage the network interfaces by default.
 
-```bash
-$ sudo apt-get install iproute2
-```
+## Netplan Configuration
 
-* Display Current Network Settings
+Netplan configurations may exist in the following locations (ordered from higher priority to lower):
 
-```bash
-$ ifconfig
-```
+* /run/netplan/*.yaml
+* /etc/netplan/*.yaml
+* /lib/netplan/*.yaml
 
-```bash
-$ ip a
-```
+"Alphabetically later files, no matter what directory in, will amend keys if the key does not already exist and override previous keys if they do." [1]
 
-* Enable and Disable an Interface
+### Apply Netplan configurations
 
-```bash
-$ sudo ifconfig eth0 up
-$ sudo ifconfig eth0 down
-```
-
-```bash
-$ sudo ip link set eth0 up
-$ sudo ip link set eth0 down
-```
-
-* Assign a IP/Netmask to an Interface
-
-```bash
-$ sudo ifconfig eth0 192.168.0.2
-$ sudo ifconfig eth0 netmask 255.255.255.0
-$ sudo ifconfig eth0 del 192.168.1.10
-$ sudo ifconfig eth0 mtu 1080
-```
-
-```bash
-$ sudo ip addr add 192.168.0.2/24 dev eth0
-$ sudo ip addr del 192.168.0.2/24 dev eth0
-$ sudo ip link set dev eth0 mtu 1500
-```
-
-* Show Routing Table
-
-```bash
-$ route -n
-$ sudo route add default gw 192.168.1.1
-$ sudo route add -net 10.5.5.10 netmask 255.255.255.0 gw 192.168.0.1
-```
-
-```bash
-$ ip route show
-$ sudo ip route add default via 192.168.1.1
-$ sudo ip route add 10.5.5.10/24 via 192.168.0.1 dev eth0
-$ sudo ip route del 10.5.5.10/24
-$ sudo ip route del default via 62.12.113.1 dev eth1
-```
-
-## Netplan Reference Configuration
-
-Since Ubuntu 20.04, "netplan" is used to manage network interfaces, replacing the old "/etc/network/interfaces" configuration file. You can find configurations for netplan at "/etc/netplan". After modifying the "*.yaml" file, you can use the following command to apply the changes:
+After modifying the "*.yaml" file, you can use the following command to apply the changes:
 
 ```bash
 $ sudo netplan apply
 ```
-
-Here are some snippets of the most commonly used netplan configurations from [1]. You can find more details in the [official documentation](https://netplan.io/reference).
-
 
 ### Create a Loopback Interface
 
@@ -160,7 +108,10 @@ network:
               - enp3s0
 ```
 
+More references can be found at [3].
+
 ## Reference
 
-* [1] https://netplan.io/examples
-* [2] https://netplan.io/reference
+* [1] https://netplan.io/faq
+* [2] https://netplan.io/examples
+* [3] https://netplan.readthedocs.io/en/latest/netplan-yaml/
