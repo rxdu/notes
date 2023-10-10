@@ -27,7 +27,16 @@ The following table is taken from [4] by peci1 published on ROS Discourse:
 |    Power Profile     |  Yes  |     P2P     |  L2   |   
 |    GigE Vision 11    |  Yes  |   P2P/E2E   |   ?   |  
 
-## Relevant Packages
+## Configure Linux PTP 
+
+### Tutorials & manual
+
+* [Redhat Doc: Configuring PTP Using ptp4l](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/ch-configuring_ptp_using_ptp4l)
+* [ptp4l (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/ptp4l.8.html)
+* [phc2sys (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/phc2sys.8.html)
+* [Ouster PTP Reference](https://static.ouster.dev/sensor-docs/image_route1/image_route3/appendix/ptp-quickstart.html)
+
+### Install relevant packages
 
 ```bash
 ## install the packages
@@ -43,50 +52,9 @@ The following list is taken from the Ouster documentation to give you a brief id
     - **pmc** to query the PTP nodes on the network.
 * **chrony** - A NTP and PTP time synchronization daemon. It can be configured to listen to both NTP time sources via the Internet and a PTP master clock such as one provided by a GPS with PTP support. This will validate the time configuration makes sense given multiple time sources.
 
-## Configure Linux PTP 
+### Hardware and driver support
 
-### Tutorials & Manual
-
-* [Redhat Doc: Configuring PTP Using ptp4l](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/ch-configuring_ptp_using_ptp4l)
-* [ptp4l (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/ptp4l.8.html)
-* [phc2sys (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/phc2sys.8.html)
-* [Ouster PTP Reference](https://static.ouster.dev/sensor-docs/image_route1/image_route3/appendix/ptp-quickstart.html)
-
-### Checking Clocks Synchronization [6]
-
-* Check time synchronization between PHC and the Grandmaster clock
-
-    Look at output of the **ptp4l**:
-
-    ```
-    ptp4l[5374018.735]: rms  787 max 1208 freq -38601 +/- 1071 delay  -14 +/-   0
-    ptp4l[5374019.735]: rms 1314 max 1380 freq -36204 +/- 346 delay   -14 +/-   0
-    ptp4l[5374020.735]: rms  836 max 1106 freq -35734 +/-  31 delay   -14 +/-   0
-    ptp4l[5374021.736]: rms  273 max  450 freq -35984 +/-  97 delay   -14 +/-   0
-    ptp4l[5374022.736]: rms   50 max   82 freq -36271 +/-  64 delay   -14 +/-   0
-    ptp4l[5374023.736]: rms   81 max   86 freq -36413 +/-  17 delay   -14 +/-   0
-    ```
-
-    If ptp4l consistently reports rms lower than 100 ns, the PHC is synchronized.
-
-* Check time synchronization between the PHC and the system clock
-
-    Look at output of the **phc2sys**:
-
-    ```
-    phc2sys[5374168.545]: CLOCK_REALTIME phc offset   -372582 s0 freq    +246 delay   6649
-    phc2sys[5374169.545]: CLOCK_REALTIME phc offset   -372832 s1 freq      -4 delay   6673
-    phc2sys[5374170.547]: CLOCK_REALTIME phc offset        68 s2 freq     +64 delay   6640
-    phc2sys[5374171.547]: CLOCK_REALTIME phc offset       -20 s2 freq      -3 delay   6687
-    phc2sys[5374172.547]: CLOCK_REALTIME phc offset        47 s2 freq     +58 delay   6619
-    phc2sys[5374173.548]: CLOCK_REALTIME phc offset       -40 s2 freq     -15 delay   6680
-    ```
-
-    If phc2sys consistently reports offset lower than 100 ns, the System clock is synchronized.
-
-### Command Reference
-
-* Check for hardware and driver support
+You can use the following command to check the hardware and driver support of the network interface:
 
 ```bash
 $ ethtool -T eth0
@@ -132,11 +100,116 @@ Hardware Transmit Timestamp Modes: none
 Hardware Receive Filter Modes: none
 ```
 
-* Check synchronization between PHC and system time
+### PTP configration summary
 
-```bash
-$ sudo phc_ctl eth0 cmp
-```
+#### Set up ptp clock master or slave
+
+1. Update the configuration file /etc/linuxptp/ptp4l.conf
+
+    If you're setting  up a master clock, change the following lines:
+
+    ```
+    #clockClass     248
+    clockClass      128
+    # at very bottom of the file
+    boundary_clock_jbod 1
+    [eth0]
+    ```
+
+    If you're setting up a slave device, change the following lines:
+    ```
+    #slaveOnly              0
+    slaveOnly               1
+    # at very bottom of the file
+    boundary_clock_jbod 1
+    [eth0]
+    ```
+
+2. Create a systemd service for ptp4l: /etc/systemd/system/ptp4l.service
+
+    ```
+    [Unit]
+    Description=ptp4l service
+    Requires=network-online.target
+    After=network-online.target
+
+    [Service]
+    ExecStart=/usr/sbin/ptp4l -f /etc/linuxptp/ptp4l.conf
+    Restart=on-failure
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+3. Start and enable the ptp4l service
+
+    ```
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl start ptp4l.service
+    # if you get no errors starting the service
+    $ sudo systemctl enable ptp4l.service
+    ```
+
+#### Configure phc2sys to synchronize the system time to the PTP clock
+
+1. Create a systemd service for phc2sys: /etc/systemd/system/phc2sys.service
+
+    ```
+    [Unit]
+    Description=Synchronize system clock or PTP hardware clock (PHC)
+    Documentation=man:phc2sys
+    Requires=ptp4l.service
+    After=ptp4l.service
+
+    [Service]
+    ExecStart=/usr/sbin/phc2sys -w -s CLOCK_REALTIME -c eth0
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+2. Start and enable the phc2sys service
+
+    ```
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl start phc2sys.service
+    # if you get no errors starting the service
+    $ sudo systemctl enable phc2sys.service
+    ```
+
+### Check clock synchronization 
+
+* Check time synchronization between PHC and the Grandmaster clock
+
+    Look at output of the **ptp4l**:
+
+    ```
+    ptp4l[5374018.735]: rms  787 max 1208 freq -38601 +/- 1071 delay  -14 +/-   0
+    ptp4l[5374019.735]: rms 1314 max 1380 freq -36204 +/- 346 delay   -14 +/-   0
+    ptp4l[5374020.735]: rms  836 max 1106 freq -35734 +/-  31 delay   -14 +/-   0
+    ptp4l[5374021.736]: rms  273 max  450 freq -35984 +/-  97 delay   -14 +/-   0
+    ptp4l[5374022.736]: rms   50 max   82 freq -36271 +/-  64 delay   -14 +/-   0
+    ptp4l[5374023.736]: rms   81 max   86 freq -36413 +/-  17 delay   -14 +/-   0
+    ```
+
+    If ptp4l consistently reports rms lower than 100 ns, the PHC is synchronized.
+
+* Check time synchronization between the PHC and the system clock
+
+    Look at output of the **phc2sys**:
+
+    ```
+    phc2sys[5374168.545]: CLOCK_REALTIME phc offset   -372582 s0 freq    +246 delay   6649
+    phc2sys[5374169.545]: CLOCK_REALTIME phc offset   -372832 s1 freq      -4 delay   6673
+    phc2sys[5374170.547]: CLOCK_REALTIME phc offset        68 s2 freq     +64 delay   6640
+    phc2sys[5374171.547]: CLOCK_REALTIME phc offset       -20 s2 freq      -3 delay   6687
+    phc2sys[5374172.547]: CLOCK_REALTIME phc offset        47 s2 freq     +58 delay   6619
+    phc2sys[5374173.548]: CLOCK_REALTIME phc offset       -40 s2 freq     -15 delay   6680
+    ```
+
+    If phc2sys consistently reports offset lower than 100 ns, the System clock is synchronized.
+
+More information about clock synchronization check can be found from [6].
 
 ## Relevant Projects
 
