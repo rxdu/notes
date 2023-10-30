@@ -110,6 +110,8 @@ services:
     devices: 
       - /dev/video0:/dev/video101
     image: "sample-image:latest"
+    mem_limit: 512m
+    mem_reservation: 128M
     logging:
         driver: "json-file"
         options:
@@ -131,6 +133,14 @@ services:
     network_mode: "host"
     command: ["arg1", "arg2", "arg3"]
     restart: unless-stopped
+```
+
+Note that you need to enable cgroup function for resource limit (ram/cpu). The reservation memory size should be smaller than the memory limit. [3]
+
+## Check Resource Usage
+
+```bash
+$ sudo docker stats
 ```
 
 ## Nvidia Docker
@@ -158,5 +168,6 @@ Option explained:
 
 ## Reference
 
-* https://docs.docker.com/engine/reference/commandline/run/
-* https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-base
+* [1] https://docs.docker.com/engine/reference/commandline/run/
+* [2] https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-base
+* [3] https://docs.docker.com/config/containers/resource_constraints/
