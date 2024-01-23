@@ -224,7 +224,7 @@ $ colcon test --ctest-args tests [package_selection_args]
 $ colcon test --ctest-args tests --packages-select my_package_to_test
 ```
 
-To exame test results
+To examine test results
 
 ```bash
 $ colcon test-result --all
