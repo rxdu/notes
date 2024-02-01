@@ -221,6 +221,34 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 <member_of_group>rosidl_interface_packages</member_of_group>
 ```
 
+## Package as a Library
+
+If you create a ROS2 package that mainly serves as a library for other packages to use, you need to make sure you export the headers and library properly:
+
+```cmake
+cmake_minimum_required(VERSION 3.8)
+project(my_custom_lib)
+
+# standard ROS2 ament cmake
+...
+
+# the install and export configuration
+install(TARGETS
+        my_custom_lib
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(DIRECTORY
+        include/
+        DESTINATION include)
+
+ament_export_include_directories(include)
+ament_export_libraries(my_custom_lib)
+
+ament_package()
+```
+
 ## Handle Parameters
 
 #### Sample parameter file
