@@ -20,7 +20,7 @@ To enable a service means that the service will be started at boot time.
 
 ```bash
 $ sudo systemd-analyze blame
-``````
+```
 
 * To check the log of a service
 
