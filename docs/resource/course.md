@@ -2,24 +2,12 @@
 
 ## Open Course
 
-* Coursera
-	- Algorithms: Design and Analysis, Part 1, Tim Roughgarden, Stanford University  
-        https://www.coursera.org/course/algo
-* EdX
-	- Artificial Intelligence, Dan Klein and Pieter Abbeel, UC Berkeley  
-        https://courses.edx.org/courses/BerkeleyX/CS188x_1/1T2013/info		
-	- Underactuated Robotics, Russ Tedrake, MIT  
-        https://courses.edx.org/courses/MITx/6.832x/3T2014/info
-	- Dynamics, Multiple Professors, MIT  
-        https://courses.edx.org/courses/MITx/2.03x/3T2013/info
-		
-* Udacity
-	- Artificial Intelligence for Robotics: Programming a Robotic Car, Sebastian Thrun, Standford University  
-        https://www.udacity.com/course/cs373
-
-* Online Robotics
-    - https://github.com/brunoeducsantos/robotics_master
-		
+* Robotics
+	- [Underactuated Robotics, Russ Tedrake, MIT](https://learning.edx.org/course/course-v1:MITx+6.832x_2+3T2015/home)
+    - [https://github.com/brunoeducsantos/robotics_master](https://github.com/brunoeducsantos/robotics_master)
+	- https://github.com/UMich-CURLY-teaching/UMich-ROB-530-public
+    	- [Github](https://github.com/UMich-CURLY-teaching/UMich-ROB-530-public)
+    	- [Youtube](https://www.youtube.com/watch?v=pH4Pkmey2_E&list=PLdMorpQLjeXmbFaVku4JdjmQByHHqTd1F)
 	
 ## University Course
 
