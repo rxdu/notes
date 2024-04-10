@@ -143,7 +143,8 @@ Note that "matrices represent linear transforms; quaternions represent a special
 
 In addition to the quaternion itself, we have:
 
-* Quaternion Conjugate: $q^{*} = (w, -\vec{v})$
+* Quaternion Conjugate: $q^{*} = (w, -\vec{v})$. Geometrically, the conjugate represents the inverse of the rotation that q represents. If q rotates a vector in 3D space in one direction, $q^{*}$ rotates it back to the original position. In terms of rotation, if q rotates a coordinate frame from frame A to frame B, then $q^{*}$ rotates it from frame B back to frame A.
+* The negative of a quaternion q, denoted as $-q$, is simply the quaternion with all the components negated: $q^{*} = (-w, -\vec{v})$. Geometrically, a quaternion and its negative represent the same rotation in 3D space. This is because a quaternion and its negative point to the same point on the 4D unit sphere, which corresponds to the same rotation in 3D space.
 * Quaternion Inverse: $q^{-1} = \frac{q^{*}}{{\| q \|}^2}$, for unit quaternion, we have $q^{*} = q^{-1}$
 
 The following operations are frequently used:
