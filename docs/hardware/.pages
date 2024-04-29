@@ -3,5 +3,4 @@ nav:
     - raspberrypi
     - beaglebone
     - odroid
-    - camera
-  
+    - PCB Design: 'pcb'
