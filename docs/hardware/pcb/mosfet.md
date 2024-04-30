@@ -25,7 +25,7 @@ Use N-channel enhanced type MOSFET as an example, you can consider it as a volta
 
 The following are two typical use cases of NMOS and PMOS as a switch. [3]
 
-<img src="./figures/nmos_pmos.jpg" alt="nmos_pmos" width="500"/>
+![](./figures/nmos_pmos.jpg){: style="width:500px"}
 
 Because NMOS is turned on when $V_{GS}$ is high, it's normally placed at the lower side connecting to the ground so that it doesn't require a very high voltage to turn on. For similar reasons, PMOS is usually placed at the top side conntecting to the power positive so that it's easy to turn it on by pulling the voltage at gate low.
 
@@ -33,7 +33,16 @@ Another difference to note is that the current flows from source to drain in PMO
 
 ## Practical Design
 
+A circuit that uses NMOS to trigger a relay to power a motor.
 
+![](./figures/nmos_relay.png){: style="width:500px"}
+
+* R1 and D2 are used to indicate ON/OFF state of the relay
+* D1 is a flyback diode
+* R4 is a pull-down resistor
+* R3 is used to limite gate current, control switch on/off speed of the NMOS
+* A zener diode can be connected between gate and source to protect the MOSFET to be damaged by high voltage (in parallel to R4)
+* A diode may be added in parallel to R3 (pointing to control input) to reduce the turn-off time
 
 ## Reference
 
