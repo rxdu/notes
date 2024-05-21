@@ -32,26 +32,26 @@ The following is an overview of the SSL/TLS handshake process:
 ### Detailed Steps in an SSL/TLS Handshake
 
 1. **Client Hello**:
-   - The client sends a "Client Hello" message to the server, which includes supported SSL/TLS versions, cipher suites, and a random number.
+   The client sends a "Client Hello" message to the server, which includes supported SSL/TLS versions, cipher suites, and a random number.
 
 2. **Server Hello**:
-   - The server responds with a "Server Hello" message, including the chosen SSL/TLS version, cipher suite, and a random number.
+   The server responds with a "Server Hello" message, including the chosen SSL/TLS version, cipher suite, and a random number.
 
 3. **Server Certificate**:
-   - The server sends its certificate to the client. This certificate contains the server’s public key and is signed by a CA.
+   The server sends its certificate to the client. This certificate contains the server’s public key and is signed by a CA.
 
 4. **(Optional) Client Certificate**:
-   - In mTLS, the server also requests the client’s certificate, and the client sends it in this step.
+   In mTLS, the server also requests the client’s certificate, and the client sends it in this step.
 
 5. **Key Exchange**:
-   - **RSA**: The client generates a session key, encrypts it with the server’s public key, and sends it to the server.
-   - **Diffie-Hellman**: The client and server exchange Diffie-Hellman parameters to securely agree on a session key.
+   **RSA**: The client generates a session key, encrypts it with the server’s public key, and sends it to the server.
+   **Diffie-Hellman**: The client and server exchange Diffie-Hellman parameters to securely agree on a session key.
 
 6. **Server and Client Finished**:
-   - Both the server and client send a "Finished" message encrypted with the session key, indicating that the handshake is complete.
+   Both the server and client send a "Finished" message encrypted with the session key, indicating that the handshake is complete.
 
 7. **Secure Communication**:
-   - All subsequent data is encrypted with the symmetric session key established during the handshake.
+   All subsequent data is encrypted with the symmetric session key established during the handshake.
 
 ### Summary
 
