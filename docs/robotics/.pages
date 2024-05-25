@@ -1,6 +1,6 @@
 nav:
     - Modeling: modeling
-    - sensing.md
+    - perception.md
     - planning.md
     - control.md
     - Simulation: simulation
