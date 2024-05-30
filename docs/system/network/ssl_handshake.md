@@ -68,3 +68,5 @@ By following this process, SSL/TLS ensures secure and authenticated communicatio
 ## Reference
 
 * [1] https://jamielinux.com/docs/openssl-certificate-authority/index.html
+* [2] https://tpm2-software.github.io/software/
+* [3] https://github.com/tpm2-software
