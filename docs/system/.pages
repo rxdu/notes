@@ -1,6 +1,7 @@
 nav:
     - basics
     - linux
-    - network
     - docker
     - cloud
+    - network
+    - security

@@ -1,0 +1,4 @@
+nav:
+    - ssl_handshake.md
+    - ca_setup.md
+    - resource.md

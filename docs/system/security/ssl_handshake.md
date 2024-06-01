@@ -44,18 +44,14 @@ The following is an overview of the SSL/TLS handshake process:
    In mTLS, the server also requests the client’s certificate, and the client sends it in this step.
 
 5. **Key Exchange**:
-   **RSA**: The client generates a session key, encrypts it with the server’s public key, and sends it to the server.
-   **Diffie-Hellman**: The client and server exchange Diffie-Hellman parameters to securely agree on a session key.
+    - **RSA**: The client generates a session key, encrypts it with the server’s public key, and sends it to the server.
+    - **Diffie-Hellman**: The client and server exchange Diffie-Hellman parameters to securely agree on a session key.
 
 6. **Server and Client Finished**:
    Both the server and client send a "Finished" message encrypted with the session key, indicating that the handshake is complete.
 
 7. **Secure Communication**:
    All subsequent data is encrypted with the symmetric session key established during the handshake.
-
-## OpenSSL Certificate Authority
-
-Refer to [1] for more details about how to create a private certificate authority and use it to self-sign SSL certificates.
 
 ## Summary
 
@@ -65,8 +61,3 @@ Refer to [1] for more details about how to create a private certificate authorit
 
 By following this process, SSL/TLS ensures secure and authenticated communication between the client and server.
 
-## Reference
-
-* [1] https://jamielinux.com/docs/openssl-certificate-authority/index.html
-* [2] https://tpm2-software.github.io/software/
-* [3] https://github.com/tpm2-software
