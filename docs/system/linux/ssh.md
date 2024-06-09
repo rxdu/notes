@@ -100,7 +100,15 @@ A few examples of port forwarding with SSH from [5]:
 $ ssh -L 80:intra.example.com:80 gw.example.com
 ```
 
-"This example opens a connection to the gw.example.com jump server, and forwards any connection to port 80 on the local machine to port 80 on intra.example.com."
+"This example opens a connection to the gw.example.com jump server, and forwards any connection to port 80 on the local machine to port 80 on intra.example.com." 
+
+For example, you will be able to access the service exposed on port 16686 on the remote server from you local machine at localhost:16686 with the following command:
+
+```bash
+$ ssh -L 16686:localhost:16686 <remote-user>@<remote-server>
+```
+
+This is particularly useful if you need to access the web interface of a remote service from your local computer.
 
 * Remote forwarding
 
