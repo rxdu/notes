@@ -1,0 +1,57 @@
+# K3S
+
+K3S is a lightweight distribution of Kubernetes and it's tailored for hardware with limited resources. It's easy to set up on embedded computers and stuiable for use in small-scale applications.
+
+## Install K3S cluster
+
+* Install master
+
+```bash
+$ curl -sfL https://get.k3s.io | sh -
+```
+
+* Install agent node
+
+```bash
+$ curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -
+```
+
+Note that you need to update `myserver` to your actual server address. `mynodetoken` can be found at `/var/lib/rancher/k3s/server/node-token` on the server node.
+
+## Reset K3S cluster
+
+* For the master node
+
+```bash
+$ sudo systemctl stop k3s
+$ sudo rm -rf /var/lib/rancher/k3s
+$ sudo rm -rf /etc/rancher/k3s
+$ sudo systemctl start k3s
+```
+
+* For the agent nodes
+
+```bash
+$ sudo systemctl stop k3s-agent
+$ sudo rm -rf /var/lib/rancher/k3s/agent
+$ sudo rm -rf /etc/rancher/k3s/agent
+$ sudo systemctl start k3s-agent
+```
+
+## Uninstall K3S cluster
+
+* Uninstall the master node
+
+```bash
+$ /usr/local/bin/k3s-uninstall.sh
+```
+
+* Uninstall the agent node
+
+```bash
+$ /usr/local/bin/k3s-agent-uninstall.sh
+```
+
+## Reference
+
+* https://docs.k3s.io/
