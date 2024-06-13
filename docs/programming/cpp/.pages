@@ -1,3 +1,4 @@
 nav:
     - C++ Language: cpp_language.md
+    - C/C++ Compiler: compiler.md
     - C++ Resource: cpp_resource.md
