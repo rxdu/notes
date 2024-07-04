@@ -20,7 +20,7 @@ Netplan configurations may exist in the following locations (ordered from higher
 
 "Alphabetically later files, no matter what directory in, will amend keys if the key does not already exist and override previous keys if they do." [1]
 
-### Apply Netplan configurations
+### Apply Netplan Configurations
 
 After modifying the "*.yaml" file, you can use the following command to apply the changes:
 
