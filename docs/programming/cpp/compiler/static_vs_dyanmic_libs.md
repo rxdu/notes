@@ -89,7 +89,7 @@ In dynamic libraries, symbols are resolved at runtime. The process includes:
 
 ## Dependency between Libraries
 
-* Static Library A Depends on Static Library B
+* Static Library Depends on Static Library
 
 If a static library libA depends on another static library libB, the symbols from libB are not copied over to libA. Instead, when you build an executable that depends on libA, you will still need to link against both libA and libB.
 
