@@ -9,6 +9,10 @@
 
 * Ackerman Steering: https://www.xarg.org/book/kinematics/ackerman-steering/
 
+## Legged Robots
+
+* https://leggedrobotics.github.io/rl-blindloco/
+
 ## Hobby Robotos
 
 * Balance Bike: https://github.com/nicekwell/balance_bike
@@ -17,3 +21,4 @@
 
 * Python Robotics: https://github.com/AtsushiSakai/PythonRobotics
 * C++ Robotics: https://github.com/onlytailei/CppRobotics
+  
