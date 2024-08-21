@@ -1,6 +1,4 @@
-# Network Command
-
-## Configuration
+# Network Configuration
 
 On newer Ubuntu releases, you may not have "ifconfig" command by default. Instead, you have "ip" command out-of-box. "ip" is starting to replace "ifconfig" in newer Linux distributions.
 
@@ -69,23 +67,5 @@ $ sudo ip route del 10.5.5.10/24
 $ sudo ip route del default via 62.12.113.1 dev eth1
 ```
 
-## Diagnosis
 
-* **nslookup**: to perform a DNS lookup
 
-    ```bash
-    $ nslookup google.com    
-    ```
-
-* **netstat**: to get statistics for network ports and shows port availability
-
-    ```bash
-    # to list all TCP ports
-    $ netstat -at
-    ```
-
-* **traceroute**: to track the route that packets take to reach a destination on a TCP/IP network
-
-    ```bash
-    $ sudo traceroute -T www.google.com
-    ```
