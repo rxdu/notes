@@ -203,6 +203,7 @@ To print build output messages to stdout/stderr directly
 
 ```bash
 $ colcon build --event-handlers console_direct+ --symlink-install 
+$ colcon build --event-handlers console_cohesion+ --symlink-install 
 ```
 
 ### Check dependencies
