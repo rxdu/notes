@@ -2,6 +2,159 @@
 
 This note contains code samples from ROS Humble for quick reference. The code can be found from the Github repository [ros2_sample](https://github.com/rxdu/ros2_sample). Most of them are from the ROS official documentation. More references can be found from the official examples repository [ros2/examples](https://github.com/ros2/examples/tree/humble/rclcpp)
 
+## Python Launch File
+
+More information about ROS2 launch can be found at [ROS2 Launch](../ros2_launch)
+
+#### Sample my_app.launch.py
+
+```python
+from launch import LaunchDescription
+
+from launch.actions import DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription
+from launch.actions import ExecuteProcess
+from launch_ros.actions import Node
+
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import FrontendLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import (EnvironmentVariable, FindExecutable)
+from launch_ros.substitutions import FindPackageShare
+
+def generate_launch_description():
+    ## arguments
+    
+    ## local variables
+    map_path = PathJoinSubstitution([
+                    FindPackageShare('robot_map'),
+                    "map",
+                    "my_office"
+                ])
+
+    rviz_config_file = PathJoinSubstitution([
+                    FindPackageShare('robot_bringup'),
+                    "rviz",
+                    "autoware_default_view.rviz"
+                ])
+
+    ## actions
+    launch_py_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('robot_module'),
+                    "launch",
+                    "module_launch.launch.py"
+                ])
+            ]),    
+        launch_arguments={
+            'start_rviz2': 'false'
+        }.items())
+
+    launch_xml_launch = IncludeLaunchDescription(
+        FrontendLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('robot_nav'),
+                    "launch",
+                    'subsystem',
+                    "map.launch.xml"
+                ])
+            ]),    
+        launch_arguments={
+            'map_path': map_path,
+        }.items())
+    
+    start_rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2_sample',
+        arguments=['-d', rviz_config_file],
+        output='screen')
+
+    ## LaunchDescription
+    return LaunchDescription([
+        launch_py_launch,
+        launch_xml_launch,
+        start_rviz_node
+    ])
+```
+
+## Cmake with ament_cmake
+
+#### Sample CMakeLists.txt
+
+ament_cmake has defined many extension functions to the standar CMake. In general, you should follow the template to make sure everything is set up properly.
+
+```cmake
+cmake_minimum_required(VERSION 3.10.2)
+project(my_project VERSION 0.1.0)
+
+if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif ()
+
+## Generate symbols for IDE indexer
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+## Set compiler to use c++ 14 features
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+## Additional cmake module path
+list(APPEND CMAKE_PREFIX_PATH "/usr/lib/${CMAKE_SYSTEM_PROCESSOR}-linux-gnu/cmake")
+list(APPEND CMAKE_PREFIX_PATH "/opt/my_dep_lib/lib/cmake")
+
+## Find depdenencies and add targets
+# standard cmake dependencies
+find_package(Eigen3 REQUIRED)
+
+# ros2 dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+
+# my targets
+add_library(my_library SHARED
+    src/my_source.cpp
+)
+target_link_libraries(my_library PUBLIC Eigen3::Eigen)
+ament_target_dependencies(my_library PUBLIC rclcpp)
+target_include_directories(my_library
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+
+add_executable(my_executable src/main.cpp)
+target_link_libraries(my_executable PUBLIC my_library)
+
+# the install and export configuration
+install(
+  TARGETS my_library
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+# targets that you don't want to export
+install(TARGETS
+    my_executable
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin)
+
+install(
+  DIRECTORY include/
+  DESTINATION include/${PROJECT_NAME}
+)
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(some_dependency)
+
+ament_package()
+```
+
 ## Publisher/Subscriber
 
 #### Create a ROS2 publisher
@@ -219,34 +372,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 <exec_depend>rosidl_default_runtime</exec_depend>
 
 <member_of_group>rosidl_interface_packages</member_of_group>
-```
-
-## Package as a Library
-
-If you create a ROS2 package that mainly serves as a library for other packages to use, you need to make sure you export the headers and library properly:
-
-```cmake
-cmake_minimum_required(VERSION 3.8)
-project(my_custom_lib)
-
-# standard ROS2 ament cmake
-...
-
-# the install and export configuration
-install(TARGETS
-        my_custom_lib
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
-
-install(DIRECTORY
-        include/
-        DESTINATION include)
-
-ament_export_include_directories(include)
-ament_export_libraries(my_custom_lib)
-
-ament_package()
 ```
 
 ## Handle Parameters
@@ -482,6 +607,8 @@ RCLCPP_COMPONENTS_REGISTER_NODE(PublisherNode)
 
 #### CMakeLists.txt for the package 
 
+The below cmake file provides a complete example of how to build composable nodes. Please refer to `Sample CMakeLists.txt` above for the general cmake setup for ROS2 packages.
+
 ```cmake
 cmake_minimum_required(VERSION 3.5)
 project(examples_rclcpp_minimal_composition)
@@ -534,135 +661,6 @@ endif()
 ament_package()
 ```
 
-## Python Launch File
+## Reference
 
-More information about ROS2 launch can be found at [ROS2 Launch](../ros2_launch)
-
-#### Sample my_app.launch.py
-
-```python
-from launch import LaunchDescription
-
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
-from launch.actions import ExecuteProcess
-from launch_ros.actions import Node
-
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.launch_description_sources import FrontendLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PathJoinSubstitution
-from launch.substitutions import (EnvironmentVariable, FindExecutable)
-from launch_ros.substitutions import FindPackageShare
-
-def generate_launch_description():
-    ## arguments
-    
-    ## local variables
-    map_path = PathJoinSubstitution([
-                    FindPackageShare('robot_map'),
-                    "map",
-                    "my_office"
-                ])
-
-    rviz_config_file = PathJoinSubstitution([
-                    FindPackageShare('robot_bringup'),
-                    "rviz",
-                    "autoware_default_view.rviz"
-                ])
-
-    ## actions
-    launch_py_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('robot_module'),
-                    "launch",
-                    "module_launch.launch.py"
-                ])
-            ]),    
-        launch_arguments={
-            'start_rviz2': 'false'
-        }.items())
-
-    launch_xml_launch = IncludeLaunchDescription(
-        FrontendLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('robot_nav'),
-                    "launch",
-                    'subsystem',
-                    "map.launch.xml"
-                ])
-            ]),    
-        launch_arguments={
-            'map_path': map_path,
-        }.items())
-    
-    start_rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2_sample',
-        arguments=['-d', rviz_config_file],
-        output='screen')
-
-    ## LaunchDescription
-    return LaunchDescription([
-        launch_py_launch,
-        launch_xml_launch,
-        start_rviz_node
-    ])
-```
-
-## Cmake with ament_cmake
-
-#### Sample CMakeLists.txt
-
-Sample CMakeLists.txt for building msg/srv/action can be found [here](https://github.com/rxdu/ros2_sample/tree/main/src/example_interfaces).
-
-```cmake
-cmake_minimum_required(VERSION 3.5)
-project(my_project)
-
-# Default to C99 and C++14
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_components REQUIRED)
-
-find_package(Eigen3 REQUIRED)
-
-add_library(my_library SHARED
-            src/source_code.cpp)
-ament_target_dependencies(my_library rclcpp rclcpp_components)
-target_link_libraries(my_library Eigen3::Eigen)
-target_include_directories(my_library
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-  PRIVATE src)
-
-ament_export_targets(my_libraryTargets HAS_LIBRARY_TARGET)
-ament_export_dependencies(some_dependency)
-
-install(
-  DIRECTORY include/
-  DESTINATION include
-)
-
-install(
-  TARGETS my_library
-  EXPORT my_libraryTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-)
-
-ament_package()
-```
-
+* https://docs.ros.org/en/humble/How-To-Guides/Ament-CMake-Documentation.html
