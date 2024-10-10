@@ -128,26 +128,23 @@ target_include_directories(my_library
 add_executable(my_executable src/main.cpp)
 target_link_libraries(my_executable PUBLIC my_library)
 
-# the install and export configuration
+## The install and export configuration
+# library targets that external packages may use 
 install(
   TARGETS my_library
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-)
-
-# targets that you don't want to export
-install(TARGETS
-    my_executable
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin)
+  RUNTIME DESTINATION bin)
 
 install(
   DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
-)
+  DESTINATION include/${PROJECT_NAME})
+
+# executable targets that you want to start with "ros2 run"
+install(TARGETS
+    my_executable
+    DESTINATION lib/${PROJECT_NAME})
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(some_dependency)
