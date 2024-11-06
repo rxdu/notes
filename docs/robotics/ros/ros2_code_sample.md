@@ -141,6 +141,10 @@ install(
   DIRECTORY include/
   DESTINATION include/${PROJECT_NAME})
 
+install(
+  DIRECTORY launch 
+  DESTINATION share/${PROJECT_NAME})
+
 # executable targets that you want to start with "ros2 run"
 install(TARGETS
     my_executable
