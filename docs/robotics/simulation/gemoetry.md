@@ -1,4 +1,0 @@
-# Geometry
-
-http://www.wykobi.com/features.html
-https://libigl.github.io/
