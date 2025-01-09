@@ -35,7 +35,54 @@ Relationship between `robot_state_publisher` and `joint_state_publisher`/`joint_
     * In general, you don't need both in one setup. `joint_state_broadcaster` can dynamically update and publish joint states, while `joint_state_publisher` mainly publishes configurable but mostly static joint states. 
 * If no one is publishing joint states, the `robot_state_publisher` can’t do much as its TF frames will be at default or uninitialized states.
 
+## Robot Model
 
+Gazebo uses `SDF` to describe the robot and the simulation environment. In the ROS ecosystem, `URDF` and `xacro` are more commonly used to describe the robot links and joints.
+
+* [SDF Specifications](http://sdformat.org/spec)
+* [URDF Specifications](https://wiki.ros.org/urdf/XML)
+* [xacro Specifications](https://wiki.ros.org/xacro)
+
+xacro provides features such as macro/property/expression/condition to make it easier to write shorter and more readable description of the robot. A xacro XML file can be easily converted to a URDF XML file without loosing information. Tags supported by xacro/URDF is more or less a subset of thoese in SDF. SDF also allows you to specify properties of the environment, physics, scene etc. You can also convert a URDF file to SDF file.
+
+```bash
+# xacro to urdf
+$ xacro robot.xacro > robot.xacro.urdf 
+
+# urdf to sdf
+$ ign sdf -p ./robot.xacro.urdf  > robot.urdf.sdf
+```
+
+Some general guidelines for choosing the most suitable format:
+
+* If your development is mainly around Gazebo, SDF may be the best choice since you can easily configure both the robot and simulation setup.
+* If your simulation setup is tightly coupled with ROS, for example, when you use ros2_control framework, xacro is the preferred choice, as it's well supported both by Gazebo and ROS. Gazebo support [spawning a robot defined by URDF into an environment defined by SDF](https://gazebosim.org/docs/fortress/spawn_urdf/).
+
+## Gazebo Interface
+
+Gazebo contains a set of components that handles robot/environment model handling and dynamic simulation with a physics engine. It's built with a plugin system, which integrates all the components into a complete system that can be easily extended. The architecture diagram can be found in the [official documentation](https://gazebosim.org/docs/latest/architecture/).
+
+There are multiple ways you can interact with simulation entities (e.g. robot, sensors).
+
+![](./figures/gazebo_interface.drawio.png)
+
+As shown in the above diagram, green blocks 1-4 represent user code that may interact with the simulated environment. 
+
+* Block 1 is a Gazebo plugin completely implemented by the user, in which you can define what you want to do before/during/after each simulation update
+* Block 4 is a plugin provided by the ros2_control project. You configure the joints and supported sensors in the URDF and  the plugin will create a controller manager that connects the controllers to the hardware interfaces. You can use both the controllers implemented in ros2_controllers or implement your own controller.
+* Block 2 adds a layer of separation by utilizing the Gazebo transport. Unlike the plugin method in which the plugins run in the same process with the Gazebo simulator, user code runs in a separate process and communicates with the simulator via the Gazebo transport. You can check the topics using `ign topic list` or `gz topic list`.
+* Block 3 is a normal ROS node and it can only communicate with the simulator is the Gazebo transport topics are translated to ROS topics using ros_gz_bridge or a user-implemented node. 
+
+You may find the following GitHub repositories useful when developing applications that interface with the Gazebo simulator:
+
+* https://github.com/gazebosim/gz-sim
+* https://github.com/gazebosim/ros_gz
+* https://github.com/ros-controls/gz_ros2_control
+* https://github.com/ros-controls/ros2_controllers
+
+A project template for creating Gazebo plugins can be found [here](https://gazebosim.org/docs/harmonic/ros_gz_project_template_guide/): 
+
+* https://github.com/gazebosim/ros_gz_project_template
 
 ## Reference:
 
