@@ -25,7 +25,7 @@ Differences between `joint_state_publisher` and `joint_state_broadcaster`:
     - The joint_state_broadcaster publishes them on /joint_states.
 * The `joint_state_publisher` node (and its GUI version `joint_state_publisher_gui`) is generally used for simpler, static, or manually-driven demos rather than for reading real hardware data. It doesn't have the knowledge of the real or simulated robot and it just publishes the specified or default values from the configuration file or ROS parameters.
 
-Relationship between `robot_state_publisher` and `joint_state_publisher`/`joint_state_publisher`:
+Relationship between `robot_state_publisher` and `joint_state_publisher`/`joint_state_broadcaster`:
 
 ![](./figures/ros_joint_state.jpg)
 
@@ -60,7 +60,7 @@ Some general guidelines for choosing the most suitable format:
 
 ## Gazebo Interface
 
-Gazebo contains a set of components that handles robot/environment model handling and dynamic simulation with a physics engine. It's built with a plugin system, which integrates all the components into a complete system that can be easily extended. The architecture diagram can be found in the [official documentation](https://gazebosim.org/docs/latest/architecture/).
+Gazebo contains a set of components that handles robot/environment model management and dynamic simulation with a physics engine. It's built with a plugin system, which integrates all the components into a complete system that can be easily extended. The architecture diagram can be found in the [official documentation](https://gazebosim.org/docs/latest/architecture/).
 
 There are multiple ways you can interact with simulation entities (e.g. robot, sensors).
 
@@ -68,21 +68,28 @@ There are multiple ways you can interact with simulation entities (e.g. robot, s
 
 As shown in the above diagram, green blocks 1-4 represent user code that may interact with the simulated environment. 
 
-* Block 1 is a Gazebo plugin completely implemented by the user, in which you can define what you want to do before/during/after each simulation update
+* Block 1 is a Gazebo plugin completely implemented by the user, in which you can define what you want to do before/during/after each simulation update.
 * Block 4 is a plugin provided by the ros2_control project. You configure the joints and supported sensors in the URDF and  the plugin will create a controller manager that connects the controllers to the hardware interfaces. You can use both the controllers implemented in ros2_controllers or implement your own controller.
 * Block 2 adds a layer of separation by utilizing the Gazebo transport. Unlike the plugin method in which the plugins run in the same process with the Gazebo simulator, user code runs in a separate process and communicates with the simulator via the Gazebo transport. You can check the topics using `ign topic list` or `gz topic list`.
-* Block 3 is a normal ROS node and it can only communicate with the simulator is the Gazebo transport topics are translated to ROS topics using ros_gz_bridge or a user-implemented node. 
+* Block 3 is a normal ROS node and it can only communicate with the simulator if the Gazebo transport topics are translated to ROS topics using ros_gz_bridge or a user-implemented node. 
+
+In general, you should consider the best interfacing method based on your use cases:
+
+* If you're following the ros2_control workflow to implement a controller for your robot, method 4 might be most suitable.
+* If you want to implement a custom sensor/device, method 1 is straightforward.
+* If you just try to add a built-in sensor (such as Lidar/Camera) provided by Gazebo, you may simply configure the sensor in the URDF and use the ros_gz_bridge to expose the sensor data to the ROS network.
+* If you want something less coupled with Gazebo, method 2 and/or 3 can be considered.
 
 You may find the following GitHub repositories useful when developing applications that interface with the Gazebo simulator:
 
-* https://github.com/gazebosim/gz-sim
-* https://github.com/gazebosim/ros_gz
-* https://github.com/ros-controls/gz_ros2_control
-* https://github.com/ros-controls/ros2_controllers
+* [https://github.com/gazebosim/gz-sim](https://github.com/gazebosim/gz-sim)
+* [https://github.com/gazebosim/ros_gz](https://github.com/gazebosim/ros_gz)
+* [https://github.com/ros-controls/gz_ros2_control](https://github.com/ros-controls/gz_ros2_control)
+* [https://github.com/ros-controls/ros2_controllers](https://github.com/ros-controls/ros2_controllers)
 
-A project template for creating Gazebo plugins can be found [here](https://gazebosim.org/docs/harmonic/ros_gz_project_template_guide/): 
+A project template for creating Gazebo plugins can be found in the repository with [documentation](https://gazebosim.org/docs/harmonic/ros_gz_project_template_guide/): 
 
-* https://github.com/gazebosim/ros_gz_project_template
+* [https://github.com/gazebosim/ros_gz_project_template](https://github.com/gazebosim/ros_gz_project_template)
 
 ## Reference:
 
