@@ -40,4 +40,6 @@ int main() {
 }
 ```
 
-* Reference: https://stackoverflow.com/a/19809787/2200873
+## Reference
+
+* https://stackoverflow.com/a/19809787/2200873

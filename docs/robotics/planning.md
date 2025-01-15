@@ -8,6 +8,7 @@
 
 * [Behavior Trees vs Finite-State Machines](https://roboticseabass.com/2021/05/08/introduction-to-behavior-trees/)
 * [ETH: Applied Compositional Thinking for Engineers](https://applied-compositional-thinking.engineering/lectures/)
+* [Forester: Behavior Tree Orchestration Engine](https://github.com/forester-bt/forester)
 
 ## Motion Planning 
 

@@ -1,5 +1,5 @@
 nav:
-    - basics
+    # - basics
     - linux
     - docker
     - cloud

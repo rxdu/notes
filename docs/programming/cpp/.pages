@@ -1,4 +1,6 @@
 nav:
     - C++ Language: cpp_language.md
-    - C/C++ Compiler: compiler.md
-    - C++ Resource: cpp_resource.md
+    - C++ Compiler: compiler.md
+    - C++ Tool: cpp_tool.md
+    - C++ Library: cpp_library.md
+    - C++ Documentation: cpp_doc.md

@@ -91,6 +91,6 @@ A project template for creating Gazebo plugins can be found in the repository wi
 
 * [https://github.com/gazebosim/ros_gz_project_template](https://github.com/gazebosim/ros_gz_project_template)
 
-## Reference:
+## Reference
 
 * https://gazebosim.org/docs/fortress/ros2_interop/

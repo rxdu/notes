@@ -1,0 +1,3 @@
+nav:
+    - Large Language Model: llm.md
+    - Segmentation Model: segmentation.md

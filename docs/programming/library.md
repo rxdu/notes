@@ -42,6 +42,8 @@
 
 * Additional robotics libraries: https://github.com/jslee02/awesome-robotics-libraries
 
+* NtripCaster - https://github.com/baidu/ntripcaster
+
 **Communication**
 
 * Lightweight Communications and Marshalling (LCM) - https://lcm-proj.github.io/  

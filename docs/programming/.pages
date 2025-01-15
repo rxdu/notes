@@ -3,4 +3,5 @@ nav:
     - python
     - debugging
     - webrtc
+    - OpenGL: opengl
     - library.md
