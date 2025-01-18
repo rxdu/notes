@@ -14,6 +14,11 @@
 ## Legged Robots
 
 * https://leggedrobotics.github.io/rl-blindloco/
+* https://github.com/ShuoYangRobotics/A1-QP-MPC-Controller
+* https://github.com/qiayuanl/legged_control
+* https://github.com/qiayuanl/legged_perceptive
+* https://github.com/iit-DLSLab/Quadruped-PyMPC
+* https://github.com/robomechanics/quad-sdk
 
 ## Hobby Robotos
 

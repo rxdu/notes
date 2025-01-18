@@ -5,4 +5,5 @@ nav:
     - control.md
     - Simulation: simulation
     - ROS: ros
-    - reference.md
+    - Robot: robot.md
+    - Book: book.md

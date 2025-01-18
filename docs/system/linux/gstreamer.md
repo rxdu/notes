@@ -87,3 +87,4 @@ $ gst-discoverer-1.0 https://gstreamer.freedesktop.org/data/media/sintel_trailer
 * [3] https://gstreamer.freedesktop.org/documentation/tools/gst-launch.html?gi-language=c
 * [4] https://github.com/matthew1000/gstreamer-cheat-sheet/tree/master
 * [5] https://www.wowza.com/blog/streaming-protocols
+* [6] https://github.com/PhysicsX/Gstreamer-on-embedded-devices
