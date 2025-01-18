@@ -6,4 +6,4 @@ nav:
     - Simulation: simulation
     - ROS: ros
     - Robot: robot.md
-    - Book: book.md
+    - Reference: reference.md
