@@ -112,16 +112,19 @@ find_package(Eigen3 REQUIRED)
 
 # ros2 dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
+
+set(ros_dependencies
+    rclcpp)
+foreach (dep IN ITEMS ${ros_dependencies})
+  find_package(${dep} REQUIRED)
+endforeach ()
 
 # my targets
 add_library(my_library SHARED
-    src/my_source.cpp
-)
+    src/my_source.cpp)
 target_link_libraries(my_library PUBLIC Eigen3::Eigen)
-ament_target_dependencies(my_library PUBLIC rclcpp)
-target_include_directories(my_library
-  PUBLIC
+ament_target_dependencies(my_library PUBLIC ${ros_dependencies})
+target_include_directories(my_library PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
@@ -130,28 +133,24 @@ target_link_libraries(my_executable PUBLIC my_library)
 
 ## The install and export configuration
 # library targets that external packages may use 
-install(
-  TARGETS my_library
+install(TARGETS my_library
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin)
 
-install(
-  DIRECTORY include/
+install(DIRECTORY include/
   DESTINATION include/${PROJECT_NAME})
 
-install(
-  DIRECTORY launch 
+install(DIRECTORY launch 
   DESTINATION share/${PROJECT_NAME})
 
 # executable targets that you want to start with "ros2 run"
-install(TARGETS
-    my_executable
+install(TARGETS my_executable
     DESTINATION lib/${PROJECT_NAME})
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(some_dependency)
+ament_export_dependencies(${ros_dependencies} other_sys_dependencies)
 
 ament_package()
 ```
