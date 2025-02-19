@@ -14,6 +14,12 @@ $ curl -sfL https://get.k3s.io | sh -
 
 ```bash
 $ curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -
+
+# or if you want to install a specific version 
+$ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.30.6+k3s1" K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -
+
+# you may check version your existing nodes
+$ kubectl version
 ```
 
 Note that you need to update `myserver` to your actual server address. `mynodetoken` can be found at `/var/lib/rancher/k3s/server/node-token` on the server node.
@@ -74,7 +80,7 @@ $ curl -v -k https://localhost:6443
 ```bash
 $ kubectl drain <node-name>
 
-# you may need to ignore daemonsets and local-data in the machine
+# you may need to ignore daemonsets and delete local-data
 $ kubectl drain <node-name> --ignore-daemonsets --delete-local-data
 
 $ kubectl delete node <node-name>
@@ -107,6 +113,28 @@ Remove the finalizers section and save. Then try to delete the namespace again:
 ```bash
 $ kubectl delete namespace arc-runners
 ```
+
+## Check status of pods
+
+If a pod fails to start, you may get information about the error:
+
+```bash
+$ kubectl describe pod <podname> -n <namespace>
+```
+
+You may also check logs of the pod
+
+
+```bash
+$ kubectl logs -f <podname>
+```
+
+To get an overview of all pods in the cluster:
+
+```bash
+$ kubectl get pods --all-namespaces -o wide
+```
+
 
 ## Reference
 
