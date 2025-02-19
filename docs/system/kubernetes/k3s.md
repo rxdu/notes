@@ -69,6 +69,17 @@ $ for i in `ls /var/lib/rancher/k3s/server/tls/*.crt`; do echo $i; openssl x509 
 $ curl -v -k https://localhost:6443
 ```
 
+## Remove a client node
+
+```bash
+$ kubectl drain <node-name>
+
+# you may need to ignore daemonsets and local-data in the machine
+$ kubectl drain <node-name> --ignore-daemonsets --delete-local-data
+
+$ kubectl delete node <node-name>
+```
+
 ## Purge a namespace
 
 ```bash
@@ -100,3 +111,4 @@ $ kubectl delete namespace arc-runners
 ## Reference
 
 * https://docs.k3s.io/
+* https://stackoverflow.com/questions/35757620/how-to-gracefully-remove-a-node-from-kubernetes
