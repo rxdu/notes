@@ -114,6 +114,20 @@ Remove the finalizers section and save. Then try to delete the namespace again:
 $ kubectl delete namespace arc-runners
 ```
 
+## Manage images of the cluster
+
+To see what images have been pulled locally
+
+```bash
+sudo k3s crictl images 
+```
+
+To delete any images no currently used by a running container
+
+```bash
+sudo k3s crictl rmi --prune 
+```
+
 ## Check status of pods
 
 If a pod fails to start, you may get information about the error:
