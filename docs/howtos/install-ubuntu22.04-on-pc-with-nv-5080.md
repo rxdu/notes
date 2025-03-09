@@ -20,6 +20,7 @@ sudo apt update
 
 sudo apt install nvidia-driver-570-server-open
 ```
+
 * After all the Cubic customization steps are finished, you will get a new iso image that you can use to install Ubuntu on your computer 
 
 ## Reference
