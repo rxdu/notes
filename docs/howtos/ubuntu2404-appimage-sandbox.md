@@ -25,6 +25,12 @@ profile obsidian.appimage /path/to/Obsidian-1.6.7.AppImage flags=(default_allow)
 }
 ```
 
+Lastly, restart the apparmor service:
+
+```bash
+sudo systemctl restart apparmor.service
+```
+
 ## References
 
 - https://askubuntu.com/questions/1512287/obsidian-appimage-the-suid-sandbox-helper-binary-was-found-but-is-not-configu
