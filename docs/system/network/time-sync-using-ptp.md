@@ -2,7 +2,9 @@
 
 For a complicated robotic system, there may be multiple onboard computers and sensors working together to have the whole system functional. To ensure the data from different devices are synchronized in time, you may need to consider time synchronization among the devices. PTP is a synchronization protocol designed for this purpose and it allows sub-microsecond accuracy if properly configured. One example usage of PTP time synchronization is setting up an Ouster OS1-64 Lidar on a mobile robot for 3D mapping and navigation. To get the right timestamp for the pointcloud to be used with other parts of ROS stack, such as mapping and localization, a PTP grandmaster can be configured on the navigation computer to synchronize the time between Lidar and the computer.
 
-## How PTP works
+## 1. Background Information
+
+### 1.1 How PTP works
 
 Here are some good references:
 
@@ -11,7 +13,7 @@ Here are some good references:
 
 You can either use a dedicated PTP grand master hardware or set up a Linux computer to act as the master. In this note, we mainly consider the latter case. 
 
-## PTP Profiles
+### 1.2 PTP profiles
 
 The following table is taken from [4] by peci1 published on ROS Discourse:
 
@@ -27,20 +29,29 @@ The following table is taken from [4] by peci1 published on ROS Discourse:
 |    Power Profile     |  Yes  |     P2P     |  L2   |   
 |    GigE Vision 11    |  Yes  |   P2P/E2E   |   ?   |  
 
-## Configure Linux PTP 
+* The `default` profile is most commonly supported and used by computers and sensors on the robot
+* The `gPTP` profile has more strict requirements in the setup (for both the devices and network switches)
 
-### Tutorials & manual
+### 1.3 Additional tutorials & references
 
 * [Redhat Doc: Configuring PTP Using ptp4l](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/ch-configuring_ptp_using_ptp4l)
 * [ptp4l (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/ptp4l.8.html)
 * [phc2sys (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/phc2sys.8.html)
 * [Ouster PTP Reference](https://static.ouster.dev/sensor-docs/image_route1/image_route3/appendix/ptp-quickstart.html)
+* [PTP support in the Raspberry Pi CM4 and CM5](https://github.com/jclark/rpi-cm4-ptp-guide)
 
-### Install relevant packages
+## 2. Configure PTP in Linux 
+
+### 2.1 Sofware packages
+
+You may use `ethtool`, `linuxptp` and `chrony` in the setup. They can be installed from apt-get directly:
 
 ```bash
 ## install the packages
-$ sudo apt install ethtool linuxptp chrony
+$ sudo apt install ethtool linuxptp 
+
+## only install if needed
+sudo apt install chrony
 ```
 
 The following list is taken from the Ouster documentation to give you a brief idea of the functions of the packages:
@@ -50,9 +61,10 @@ The following list is taken from the Ouster documentation to give you a brief id
     - **ptp4l** daemon to manage hardware and participate as a PTP node
     - **phc2sys** to synchronize the Ethernet controller’s hardware clock to the Linux system clock or shared memory region
     - **pmc** to query the PTP nodes on the network.
+    - **ts2phc** to synchronize PTP Hardware Clocks (PHC) to external time stamp signals.
 * **chrony** - A NTP and PTP time synchronization daemon. It can be configured to listen to both NTP time sources via the Internet and a PTP master clock such as one provided by a GPS with PTP support. This will validate the time configuration makes sense given multiple time sources.
 
-### Hardware and driver support
+### 2.2 Check hardware and driver support
 
 You can use the following command to check the hardware and driver support of the network interface:
 
@@ -100,9 +112,124 @@ Hardware Transmit Timestamp Modes: none
 Hardware Receive Filter Modes: none
 ```
 
-### PTP configration summary
+### 2.3 General workflow
 
-#### Set up ptp clock master or slave
+In general, what we try to achieve in time synchronization for devices within a robot include:
+
+* all these devices share the same time base after synchronization (with bounded time offset)
+* the system time on all devices should not jump backwards (monotonically increasing)
+
+The general synchonization setup is illustrated as follows:
+
+```
+              [ Internet NTP Servers (optional) ]
+                             |
+                             v
+        +-----------------------------------------------+
+        |          🧠 PTP Grandmaster Node              |
+        |   (Main onboard PC with PHC-capable NIC)      |
+        |-----------------------------------------------|
+        |                                               |
+        |  1. Chrony disciplines CLOCK_REALTIME         |
+        |     - One-time step (makestep 1.0 1)          |
+        |     - Then slews slowly to avoid jumps        |
+        |                                               |
+        |  2. phc2sys pushes CLOCK_REALTIME to PHC:     |
+        |     phc2sys -w -s CLOCK_REALTIME -c eth0      |
+        |     -> Ensures PHC stays aligned to system    |
+        |                                               |
+        |  3. ptp4l advertises PHC to PTP network:      |
+        |     ptp4l -i eth0 -f /etc/ptp4l.conf          |
+        |     -> Acts as Grandmaster                    |
+        +-----------------------------------------------+
+                             |
+                             |   (PTP over Ethernet)
+                             v
+        +-----------------------------------------------+
+        |       🧩 PTP Slave Nodes (Aux PCs, Jetsons)   |
+        |-----------------------------------------------|
+        |                                               |
+        |  1. ptp4l syncs PHC from Grandmaster:         |
+        |     ptp4l -s -i eth0                          |
+        |                                               |
+        |  2. phc2sys updates system clock:             |
+        |     phc2sys -w -s eth0 -c CLOCK_REALTIME      |
+        |                                               |
+        |  -> CLOCK_REALTIME is now aligned with GM     |
+        +-----------------------------------------------+
+                             |
+                             v
+        +-----------------------------------------------+
+        |        🎥 Sensors with PTP support (optional) |
+        |      (e.g., Ouster LiDAR, FLIR cameras)       |
+        |-----------------------------------------------|
+        |  Internal PTP slave logic or hardware         |
+        |  syncs device clock from network              |
+        |  -> Ensures timestamps align with robot clocks|
+        +-----------------------------------------------+
+```
+
+### 2.4 PTP grandmaster setup
+
+#### 2.4.1 Configure Chrony to synchonize system time from the NTP servers
+
+This step is optional as all devices can still work with a local time base. But in most cases, we may want the robot system to use the correct global time for convenience (e.g. when checking and retrieving logs from the robot). This can be achived with Chrony. 
+
+Edit `/etc/chrony/chrony.conf`:
+
+```
+# Step the system clock instead of slewing it if the adjustment is larger than
+# one second, but only in the first clock update (default 3 => 1).
+makestep 1 1
+```    
+
+The main change we make is to make sure chony only steps once at the start (before the robot starts working) to avoid the system time to jump backwards.
+
+You can use the following commands to check the chrony synchonization status:
+
+```bash
+$ chronyc tracking
+$ chronyc sources -v
+```
+
+#### 2.4.2 Configure phc2sys to synchronize the system time to the PTP clock
+
+This step synchonizes time from the system clock to the PHC. Otherwise, the initial value of the PHC time is undefined that you may see nonsense values from it. You can check the system time and PHC time with the following commands: 
+
+```bash
+# system time
+$ date
+
+# PHC time on eth0
+$ sudo phc_ctl eth0 get
+```
+
+1. Create a systemd service for phc2sys: /etc/systemd/system/phc2sys.service
+
+    ```
+    [Unit]
+    Description=Synchronize system clock or PTP hardware clock (PHC)
+    Documentation=man:phc2sys
+    After=chrony.service
+
+    [Service]
+    # -s: master clock, -c: slave clock
+    ExecStart=/usr/sbin/phc2sys -s CLOCK_REALTIME -c eth0
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+2. Start and enable the phc2sys service
+
+    ```
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl start phc2sys.service
+    # if you get no errors starting the service
+    $ sudo systemctl enable phc2sys.service
+    ```
+
+#### 2.4.3 Set up ptp clock master
 
 1. Update the configuration file /etc/linuxptp/ptp4l.conf
 
@@ -111,21 +238,29 @@ Hardware Receive Filter Modes: none
     ```
     #clockClass     248
     clockClass      128
-    # at very bottom of the file
-    boundary_clock_jbod 1
-    [eth0]
     ```
+    clockClass with a value of 128 indicates that the clock you're setting up is free-running and not synchonized to an external reference source (e.g. GPS time)
+ 
 
-    If you're setting up a slave device, change the following lines:
+    If you have multiple network intefaces on the computer and you want the computer to act as a boundary clock:
     ```
-    #slaveOnly              0
-    slaveOnly               1
-    # at very bottom of the file
+      # at very bottom of the file
     boundary_clock_jbod 1
     [eth0]
+    [eth1]
     ```
+    Typically you won't need this configuration as it only gives you multiple isolated PTP networks (where the name "boundary" is from). 
+    
+    If what you really want is to synchonize time bewteen the interfaces, you still need to further configure the time using `phc2sys`.
+
+    ```bash
+    # e.g. set eth0 time to eth1
+    phc2sys -w -s eth0 -c eth1
+    ```    
 
 2. Create a systemd service for ptp4l: /etc/systemd/system/ptp4l.service
+
+    Make sure you update the interface name in the `-i eth0` part
 
     ```
     [Unit]
@@ -134,7 +269,7 @@ Hardware Receive Filter Modes: none
     After=network-online.target
 
     [Service]
-    ExecStart=/usr/sbin/ptp4l -f /etc/linuxptp/ptp4l.conf
+    ExecStart=/usr/sbin/ptp4l -i eth0 -f /etc/linuxptp/ptp4l.conf
     Restart=on-failure
 
     [Install]
@@ -150,7 +285,46 @@ Hardware Receive Filter Modes: none
     $ sudo systemctl enable ptp4l.service
     ```
 
-#### Configure phc2sys to synchronize the system time to the PTP clock
+### 2.5 PTP slave setup
+
+#### 2.5.1 Set up PTP slave
+
+1. Update the configuration file /etc/linuxptp/ptp4l.conf
+
+    If you're setting up a slave device, change the following lines:
+    ```
+    #slaveOnly              0
+    slaveOnly               1
+    ```
+
+2. Create a systemd service for ptp4l: /etc/systemd/system/ptp4l.service
+
+    Make sure you update the interface name in the `-i eth0` part
+
+    ```
+    [Unit]
+    Description=ptp4l service
+    Requires=network-online.target
+    After=network-online.target
+
+    [Service]
+    ExecStart=/usr/sbin/ptp4l -i eth0 -f /etc/linuxptp/ptp4l.conf
+    Restart=on-failure
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+3. Start and enable the ptp4l service
+
+    ```
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl start ptp4l.service
+    # if you get no errors starting the service
+    $ sudo systemctl enable ptp4l.service
+    ```
+
+#### 2.5.2 Configure phc2sys to synchronize the PTP clock to the system time
 
 1. Create a systemd service for phc2sys: /etc/systemd/system/phc2sys.service
 
@@ -162,7 +336,7 @@ Hardware Receive Filter Modes: none
     After=ptp4l.service
 
     [Service]
-    ExecStart=/usr/sbin/phc2sys -w -s CLOCK_REALTIME -c eth0
+    ExecStart=/usr/sbin/phc2sys -w -s eth0 -c CLOCK_REALTIME
 
     [Install]
     WantedBy=multi-user.target
@@ -175,6 +349,14 @@ Hardware Receive Filter Modes: none
     $ sudo systemctl start phc2sys.service
     # if you get no errors starting the service
     $ sudo systemctl enable phc2sys.service
+    ```
+
+3. Make sure you have disabled all NTP clients that may change the system clock
+ 
+    ```bash
+    sudo systemctl disable --now chrony
+    sudo systemctl disable --now systemd-timesyncd
+    sudo systemctl disable --now ntp
     ```
 
 ### Check clock synchronization 
