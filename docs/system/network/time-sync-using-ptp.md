@@ -39,6 +39,7 @@ The following table is taken from [4] by peci1 published on ROS Discourse:
 * [phc2sys (manual)](https://manpages.ubuntu.com/manpages/focal/en/man8/phc2sys.8.html)
 * [Ouster PTP Reference](https://static.ouster.dev/sensor-docs/image_route1/image_route3/appendix/ptp-quickstart.html)
 * [PTP support in the Raspberry Pi CM4 and CM5](https://github.com/jclark/rpi-cm4-ptp-guide)
+* [TSN Documentation Project for Linux](https://tsn.readthedocs.io/index.html)
 
 ## 2. Configure PTP in Linux 
 
@@ -359,7 +360,7 @@ $ sudo phc_ctl eth0 get
     sudo systemctl disable --now ntp
     ```
 
-### Check clock synchronization 
+### 2.6 Check clock synchronization 
 
 * Check time synchronization between PHC and the Grandmaster clock
 
@@ -393,11 +394,7 @@ $ sudo phc_ctl eth0 get
 
 More information about clock synchronization check can be found from [6].
 
-## Relevant Projects
-
-* [TSN Documentation Project for Linux](https://tsn.readthedocs.io/index.html)
-
-## Hardware Support
+## 3. Additional Information
 
 * https://botblox.io/collections/frontpage
 
