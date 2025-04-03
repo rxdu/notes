@@ -40,6 +40,7 @@ The following table is taken from [4] by peci1 published on ROS Discourse:
 * [Ouster PTP Reference](https://static.ouster.dev/sensor-docs/image_route1/image_route3/appendix/ptp-quickstart.html)
 * [PTP support in the Raspberry Pi CM4 and CM5](https://github.com/jclark/rpi-cm4-ptp-guide)
 * [TSN Documentation Project for Linux](https://tsn.readthedocs.io/index.html)
+* [Raspberry Pi CM4 PTP Guide](https://github.com/jclark/rpi-cm4-ptp-guide)
 
 ## 2. Configure PTP in Linux 
 
