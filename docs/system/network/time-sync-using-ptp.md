@@ -212,15 +212,20 @@ $ sudo phc_ctl eth0 get
     [Unit]
     Description=Synchronize system clock or PTP hardware clock (PHC)
     Documentation=man:phc2sys
-    After=chrony.service
+    Requires=ptp4l.service
+    After=chrony.service ptp4l.service
 
     [Service]
     # -s: master clock, -c: slave clock
-    ExecStart=/usr/sbin/phc2sys -s CLOCK_REALTIME -c eth0
+    ExecStart=/usr/sbin/phc2sys -s CLOCK_REALTIME -c eth0 -w
+    Restart=on-failure
+    RestartSec=2
 
     [Install]
     WantedBy=multi-user.target
     ```
+
+    The `-w` argument instructs phc2sys to get the TAI-UTC offset from the kernel, so leap seconds are handled automatically.
 
 2. Start and enable the phc2sys service
 
@@ -230,6 +235,8 @@ $ sudo phc_ctl eth0 get
     # if you get no errors starting the service
     $ sudo systemctl enable phc2sys.service
     ```
+
+    You will see phc2sys starts waiting for ptp4l as it the ptp4l service to set up everything in order for it to acquire the TAI-UTC offset properly. Proceed to the next step first.
 
 #### 2.4.3 Set up ptp clock master
 
@@ -273,6 +280,7 @@ $ sudo phc_ctl eth0 get
     [Service]
     ExecStart=/usr/sbin/ptp4l -i eth0 -f /etc/linuxptp/ptp4l.conf
     Restart=on-failure
+    RestartSec=2
 
     [Install]
     WantedBy=multi-user.target
@@ -312,6 +320,7 @@ $ sudo phc_ctl eth0 get
     [Service]
     ExecStart=/usr/sbin/ptp4l -i eth0 -f /etc/linuxptp/ptp4l.conf
     Restart=on-failure
+    RestartSec=2
 
     [Install]
     WantedBy=multi-user.target
@@ -339,6 +348,8 @@ $ sudo phc_ctl eth0 get
 
     [Service]
     ExecStart=/usr/sbin/phc2sys -w -s eth0 -c CLOCK_REALTIME
+    Restart=on-failure
+    RestartSec=2
 
     [Install]
     WantedBy=multi-user.target
@@ -363,7 +374,7 @@ $ sudo phc_ctl eth0 get
 
 ### 2.6 Check clock synchronization 
 
-* Check time synchronization between PHC and the Grandmaster clock
+* Check time synchronization between PHC and the Grandmaster clock (on PTP slave)
 
     Look at output of the **ptp4l**:
 
