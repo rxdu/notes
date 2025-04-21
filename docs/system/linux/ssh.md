@@ -54,6 +54,8 @@ $ ssh-add ~/.ssh/my_sshkey
 $ ssh-add -l
 # to delete a key from ssh-agent
 $ ssh-add -D <key-to-be-deleted>
+# to delete a key file from ssh-agent
+$ ssh-add -d <key-to-be-deleted>
 ```
 
 Now you only need to type in the passphrase once at the very first time you use the key.
