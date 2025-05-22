@@ -3,7 +3,7 @@
 ## Tested Environment
 
 - Debian 10.5 on AWS
-- Ubuntu 20.04 on AWS
+- Ubuntu 20.04/22.04/24.04 on AWS
 
 ## Install wireguard on server
 
@@ -34,182 +34,6 @@ You will need to create a key pair for each client  (more deails below, not need
 
 ```bash
 $ wg genkey | tee <client_private_key_name> | wg pubkey > <client_public_key_name>
-```
-
-## Generate server and client keys
-
-You will need root privilege to manipuate the "/etc/wireguard" directory
-
-```bash
-$ sudo -i 
-$ cd /etc/wireguard
-$ umask 077
-$ wg genkey | tee server_private_key | wg pubkey > server_public_key
-```
-
-You will need to create a key pair for each client  (more deails below, not needed for now)
-
-```bash
-$ wg genkey | tee <client_private_key_name> | wg pubkey > <client_public_key_name>
-```
-
-## Create server configuration file
-
-Create a file "**/etc/wireguard/wg0.conf"** with the following content
-
-```bash
-[Interface]
-Address = 10.200.200.1/24
-SaveConfig = true
-PostUp = /etc/wireguard/iptable-set.sh
-PostDown = /etc/wireguard/iptable-reset.sh
-ListenPort = 51820
-PrivateKey = <insert server_private_key>
-
-[Peer]
-PublicKey = <insert client_public_key>
-AllowedIPs = 10.200.200.2/32
-
-```
-
-Note in the above example,  
-
-* "10.200.200.0" range is used for the VPN network. You can change it to other preferred ranges
-* The ListenPort has to be accesible and you will need to add a rule in your Firewall to allow "UDP:<ListenPort\>"
-* Two scripts are used to set up or recover the routing table when you bring up or down the VPN network
-
-The setup script: 
-
-```bash
-#!/bin/bash
-
-# Reference:
-#  [1] https://www.ckn.io/blog/2017/11/14/wireguard-vpn-typical-setup/
-#  [2] https://www.cyberciti.biz/faq/how-to-set-up-wireguard-firewall-rules-in-linux/
-
-IN_FACE="eth0"                   # NIC connected to the internet
-WG_FACE="wg0"                    # WG NIC 
-SUB_NET="10.200.200.0/24"            # WG IPv4 sub/net aka CIDR
-WG_PORT="51820"                  # WG udp port
- 
-# track VPN connection
-/sbin/iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-/sbin/iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-
-# allow incoming VPN traffic on the listening port
-/sbin/iptables -A INPUT -p udp -m udp --dport $WG_PORT -m conntrack --ctstate NEW -j ACCEPT
-# allow both TCP and UDP recursive DNS traffic
-/sbin/iptables -A INPUT -s $SUB_NET -p tcp -m tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-/sbin/iptables -A INPUT -s $SUB_NET -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-# allow forwarding of packets between interfaces
-/sbin/iptables -A FORWARD -i $WG_FACE -o $WG_FACE -m conntrack --ctstate NEW -j ACCEPT
-/sbin/iptables -A FORWARD -i $IN_FACE -o $WG_FACE -m conntrack --ctstate NEW -j ACCEPT
-/sbin/iptables -A FORWARD -i $WG_FACE -o $IN_FACE -m conntrack --ctstate NEW -j ACCEPT
-# set up nat
-/sbin/iptables -t nat -A POSTROUTING -s $SUB_NET -o $IN_FACE -j MASQUERADE
-
-```
-
-The recovery script:
-
-```bash
-#!/bin/bash
- 
-IN_FACE="eth0"                   # NIC connected to the internet
-WG_FACE="wg0"                    # WG NIC 
-SUB_NET="10.200.200.0/24"            # WG IPv4 sub/net aka CIDR
-WG_PORT="51820"                  # WG udp port
-
-# allow incoming VPN traffic on the listening port
-/sbin/iptables -D INPUT -p udp -m udp --dport $WG_PORT -m conntrack --ctstate NEW -j ACCEPT
-# allow both TCP and UDP recursive DNS traffic
-/sbin/iptables -D INPUT -s $SUB_NET -p tcp -m tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-/sbin/iptables -D INPUT -s $SUB_NET -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-# allow forwarding of packets between interfaces
-/sbin/iptables -D FORWARD -i $WG_FACE -o $WG_FACE -m conntrack --ctstate NEW -j ACCEPT
-/sbin/iptables -D FORWARD -i $IN_FACE -o $WG_FACE -m conntrack --ctstate NEW -j ACCEPT
-/sbin/iptables -D FORWARD -i $WG_FACE -o $IN_FACE -m conntrack --ctstate NEW -j ACCEPT
-# set up nat
-/sbin/iptables -t nat -D POSTROUTING -s $SUB_NET -o $IN_FACE -j MASQUERADE
-
-```
-
-
-## Configure DNS
-
-Here "ubound" is used to provide DNS 
-
-```bash
-$ apt-get install unbound unbound-host dnsutils
-```
-
-Download the list of root DNS servers
-
-```bash
-$ curl -o /var/lib/unbound/root.hints https://www.internic.net/domain/named.cache
-$ chown -R unbound:unbound /var/lib/unbound
-$ cd /etc/unbound/unbound.conf.d
-$ nano unbound_srv.conf
-```
-
-Add the following content
-
-```text
-server:
-
-  num-threads: 4
-
-  #Enable logs
-  verbosity: 1
-
-  #list of Root DNS Server
-  root-hints: "/var/lib/unbound/root.hints"
-
-  #Use the root servers key for DNSSEC
-  #auto-trust-anchor-file: "/var/lib/unbound/root.key"
-
-  #Respond to DNS requests on all interfaces
-  interface: 0.0.0.0
-  max-udp-size: 3072
-
-  #Authorized IPs to access the DNS Server
-  access-control: 0.0.0.0/0                 refuse
-  access-control: 127.0.0.1                 allow
-  access-control: 10.200.200.0/24               allow
-
-  #not allowed to be returned for public internet  names
-  private-address: 10.200.200.0/24
-
-  # Hide DNS Server info
-  hide-identity: yes
-  hide-version: yes
-
-  #Limit DNS Fraud and use DNSSEC
-  harden-glue: yes
-  harden-dnssec-stripped: yes
-  harden-referral-path: yes
-
-  #Add an unwanted reply threshold to clean the cache and avoid when possible a DNS Poisoning
-  unwanted-reply-threshold: 10000000
-
-  #Have the validator print validation failures to the log.
-  val-log-level: 1
-
-  #Minimum lifetime of cache entries in seconds
-  cache-min-ttl: 1800
-
-  #Maximum lifetime of cached entries
-  cache-max-ttl: 14400
-  prefetch: yes
-  prefetch-key: yes
-
-```
-
-Now restart unbound service and enable it to autostart
-
-```bash
-$ systemctl restart unbound
-$ systemctl enable unbound
 ```
 
 ## Create server configuration file
@@ -363,6 +187,7 @@ server:
   prefetch: yes
   prefetch-key: yes
 
+  module-config: "iterator"
 ```
 
 Now restart unbound service and enable it to autostart
@@ -381,6 +206,29 @@ $ netstat -lutnp
 % disable systemd-resolved
 $ sudo systemctl stop systemd-resolved
 $ sudo systemctl disable systemd-resolved
+```
+
+If you get error message about unknown hostname, you may add the following line to "/etc/hosts" file
+
+```bash
+# add one line to /etc/hosts
+127.0.0.1 <your-hostname>
+```
+
+After that, your "/etc/hosts" file should look like this
+
+
+```text
+127.0.0.1 localhost
+127.0.0.1 <your-hostname>
+ 
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
 ```
 
 You can test your DNS setup with the following commands and you should expect to see similar results returned
