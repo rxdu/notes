@@ -286,9 +286,9 @@ Use the following command to bring down the service
 $ sudo wg-quick down wg0
 ```
 
-### Setup clients
+## Setup clients
 
-## Server side
+### Server side
 
 As mentioned above, you will have create a key pair for each client, for example:
 
@@ -306,7 +306,7 @@ In the following client setup part, we will assume you've assigned 10.200.200.2/
 
 **You need to restart the "wg0" interface to make this change into effect.**
 
-## Client side
+### Client side
 
 You can either set up the VPN profile on your device manually or from a QR code
 
