@@ -4,6 +4,7 @@ nav:
     - ROS2 Launch: ros2_launch.md
     - ROS2 RMW: ros2_rmw.md
     - ROS2 With Clion: ros2_with_clion.md
+    - CycloneDDS Settings: cyclone_dds.md
     - ROS2 Special Topics: ros2_special_topics.md
     - ROS Inside Docker: ros_inside_docker.md
     - ROS Packages: ros_packages.md

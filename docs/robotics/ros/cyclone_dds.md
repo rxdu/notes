@@ -1,8 +1,8 @@
-# Cyclone DDS Settings
+# CycloneDDS Settings
 
-## Cyclone DDS configuration
+## CycloneDDS configuration
 
-You can apply changes to the Cyclone DDS configuration by creating a file at `/etc/cyclonedds.xml` (or any other path you prefer).
+You can apply changes to the CycloneDDS configuration by creating a file at `/etc/cyclonedds.xml` (or any other path you prefer).
 
 ```bash
 sudo nano /etc/cyclonedds.xml
@@ -32,9 +32,9 @@ $ htop
 
 ## Traffic on the loopback interface
 
-According to this [issue](https://github.com/ros2/rmw_cyclonedds/issues/370), the `ROS_LOCALHOST_ONLY` environment variable is not supported in Cyclone DDS and it should not be set in your `~/.bashrc` file when you try to limit the traffic to the loopback interface.
+According to this [issue](https://github.com/ros2/rmw_cyclonedds/issues/370), the `ROS_LOCALHOST_ONLY` environment variable is not supported in CycloneDDS and it should not be set in your `~/.bashrc` file when you try to limit the traffic to the loopback interface.
 
-You may achieve this by specifying the Cyclone DDS to only listen to traffic from `localhost`.
+You may achieve this by specifying the CycloneDDS to only listen to traffic from `localhost`.
 
 This can be done by specifying the `lo` interface in the `cyclonedds.xml` file.
 
@@ -70,7 +70,7 @@ WantedBy=multi-user.target
 
 ## System-wide network settings
 
-You need to increase the maximum receive buffer size for network packets and set the IP fragmentation settings before you can apply the suggested Cyclone DDS configuration.
+You need to increase the maximum receive buffer size for network packets and set the IP fragmentation settings before you can apply the suggested CycloneDDS configuration.
 
 ```bash
 sudo nano /etc/sysctl.d/10-cyclone-max.conf
@@ -113,7 +113,7 @@ net.ipv4.ipfrag_time = 3
 net.ipv4.ipfrag_high_thresh = 134217728
 ```
 
-## Suggested Cyclone DDS configuration
+## Suggested CycloneDDS configuration
 
 The following is a configuration file that is suggested by the [Autoare Network Settings](https://autowarefoundation.github.io/autoware-documentation/main/installation/additional-settings-for-developers/network-configuration/dds-settings/#cyclonedds-configuration) documentation.
 
