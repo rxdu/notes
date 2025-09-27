@@ -2,6 +2,7 @@ nav:
     - C++: cpp
     - python
     - debugging
-    - webrtc
+    - WebRTC: webrtc
     - OpenGL: opengl
+    - Video Analytics: video_analytics
     - library.md
