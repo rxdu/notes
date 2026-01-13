@@ -17,17 +17,17 @@ You can either use a dedicated PTP grand master hardware or set up a Linux compu
 
 The following table is taken from [4] by peci1 published on ROS Discourse:
 
-|       Profile        | BMCA  | Delay mech. | Layer |   
-| :------------------: | :---: | :---------: | :---: | 
-|       Default        |  Yes  |   P2P/E2E   | L2/L3 | 
-|  gPTP (802.1AS) 17   |  Yes  |     P2P     |  L2   |  
-| Automotive        10 |  No   |     P2P     |  L2   |   
-|      Autosar 9       |  No   |     P2P     |  L2   |  
-|        LXI 1         |  Yes  |     P2P     |  L3   |   
-|  IEC 62439-3 L2P2P   |  Yes  |     P2P     |  L2   |    
-|  IEC 62439-3 L3E2E   |  Yes  |     E2E     |  L3   |   
-|    Power Profile     |  Yes  |     P2P     |  L2   |   
-|    GigE Vision 11    |  Yes  |   P2P/E2E   |   ?   |  
+|       Profile        | BMCA  | Delay mech. | Layer |
+| :------------------: | :---: | :---------: | :---: |
+|       Default        |  Yes  |   P2P/E2E   | L2/L3 |
+|  gPTP (802.1AS) 17   |  Yes  |     P2P     |  L2   |
+| Automotive        10 |  No   |     P2P     |  L2   |
+|      Autosar 9       |  No   |     P2P     |  L2   |
+|        LXI 1         |  Yes  |     P2P     |  L3   |
+|  IEC 62439-3 L2P2P   |  Yes  |     P2P     |  L2   |
+|  IEC 62439-3 L3E2E   |  Yes  |     E2E     |  L3   |
+|    Power Profile     |  Yes  |     P2P     |  L2   |
+|    GigE Vision 11    |  Yes  |   P2P/E2E   |   ?   |
 
 * The `default` profile is most commonly supported and used by computers and sensors on the robot
 * The `gPTP` profile has more strict requirements in the setup (for both the devices and network switches)
@@ -129,45 +129,45 @@ The general synchonization setup is illustrated as follows:
                              v
         +-----------------------------------------------+
         |          🧠 PTP Grandmaster Node              |
-        |   (Main onboard PC with PHC-capable NIC)      |
-        |-----------------------------------------------|
-        |                                               |
-        |  1. Chrony disciplines CLOCK_REALTIME         |
-        |     - One-time step (makestep 1.0 1)          |
-        |     - Then slews slowly to avoid jumps        |
-        |                                               |
-        |  2. phc2sys pushes CLOCK_REALTIME to PHC:     |
-        |     phc2sys -w -s CLOCK_REALTIME -c eth0      |
-        |     -> Ensures PHC stays aligned to system    |
-        |                                               |
-        |  3. ptp4l advertises PHC to PTP network:      |
-        |     ptp4l -i eth0 -f /etc/ptp4l.conf          |
-        |     -> Acts as Grandmaster                    |
+        | (Main onboard PC with PHC-capable NIC)   |
+        | ---------------------------------------- |
+        |                                          |
+        | 1. Chrony disciplines CLOCK_REALTIME     |
+        | - One-time step (makestep 1.0 1)         |
+        | - Then slews slowly to avoid jumps       |
+        |                                          |
+        | 2. phc2sys pushes CLOCK_REALTIME to PHC: |
+        | phc2sys -w -s CLOCK_REALTIME -c eth0     |
+        | -> Ensures PHC stays aligned to system   |
+        |                                          |
+        | 3. ptp4l advertises PHC to PTP network:  |
+        | ptp4l -i eth0 -f /etc/ptp4l.conf         |
+        | -> Acts as Grandmaster                   |
         +-----------------------------------------------+
                              |
                              |   (PTP over Ethernet)
                              v
         +-----------------------------------------------+
-        |       🧩 PTP Slave Nodes (Aux PCs, Jetsons)   |
-        |-----------------------------------------------|
-        |                                               |
-        |  1. ptp4l syncs PHC from Grandmaster:         |
-        |     ptp4l -s -i eth0                          |
-        |                                               |
-        |  2. phc2sys updates system clock:             |
-        |     phc2sys -w -s eth0 -c CLOCK_REALTIME      |
-        |                                               |
-        |  -> CLOCK_REALTIME is now aligned with GM     |
+        | 🧩 PTP Slave Nodes (Aux PCs, Jetsons)     |
+        | ---------------------------------------- |
+        |                                          |
+        | 1. ptp4l syncs PHC from Grandmaster:     |
+        | ptp4l -s -i eth0                         |
+        |                                          |
+        | 2. phc2sys updates system clock:         |
+        | phc2sys -w -s eth0 -c CLOCK_REALTIME     |
+        |                                          |
+        | -> CLOCK_REALTIME is now aligned with GM |
         +-----------------------------------------------+
                              |
                              v
         +-----------------------------------------------+
         |        🎥 Sensors with PTP support (optional) |
-        |      (e.g., Ouster LiDAR, FLIR cameras)       |
-        |-----------------------------------------------|
-        |  Internal PTP slave logic or hardware         |
-        |  syncs device clock from network              |
-        |  -> Ensures timestamps align with robot clocks|
+        | (e.g., Ouster LiDAR, FLIR cameras)            |
+        | --------------------------------------------- |
+        | Internal PTP slave logic or hardware          |
+        | syncs device clock from network               |
+        | -> Ensures timestamps align with robot clocks |
         +-----------------------------------------------+
 ```
 
@@ -387,7 +387,7 @@ $ sudo phc_ctl eth0 get
     ptp4l[5374023.736]: rms   81 max   86 freq -36413 +/-  17 delay   -14 +/-   0
     ```
 
-    If ptp4l consistently reports rms lower than 100 ns, the PHC is synchronized.
+  **Units**: rms/max: nanoseconds (ns), freq: parts per billion (ppb), delay: nanoseconds (ns)
 
 * Check time synchronization between the PHC and the system clock
 
@@ -402,11 +402,281 @@ $ sudo phc_ctl eth0 get
     phc2sys[5374173.548]: CLOCK_REALTIME phc offset       -40 s2 freq     -15 delay   6680
     ```
 
-    If phc2sys consistently reports offset lower than 100 ns, the System clock is synchronized.
+  **Units**: offset: nanoseconds (ns), freq: parts per billion (ppb), delay: nanoseconds (ns)
+
+* Typical ranges of the synchronization accuracy you may expect:
+
+    | Metric          | Software TimeStamps | Hardware TimeStamps |
+    | --------------- | ------------------- | ------------------- |
+    | Offset          | 10–100 µs           | <1 µs               |
+    | Path delay      | 50–300 µs           | <10 µs              |
+    | Freq correction | ±10–50 ppm          | ±1 ppm              |
+
+  **Units**: 1 µs = 1000 ns, 1 ppm = 1000 ppb
 
 More information about clock synchronization check can be found from [6].
 
-## 3. Additional Information
+## 3. Key Parameters to Tune
+
+### 3.1 Role & topology control (BMCA-related)
+
+These decide **who becomes master** and prevent “everyone is GM” disasters.
+
+**Best practice**
+
+* Explicitly set these everywhere
+* Don’t rely on defaults
+    
+#### `slaveOnly`
+
+```ini
+slaveOnly 1   # force this node to never be GM
+```
+
+* **Most important safety switch**
+* Use on *all* non-GM nodes
+* Prevents accidental GM election
+
+#### `priority1`, `priority2`
+
+```ini
+priority1 100
+priority2 100
+```
+
+BMCA ranking order (simplified):
+
+1. `priority1`
+2. clockClass
+3. clockAccuracy
+4. `priority2`
+5. clockIdentity
+
+Lower = better.
+
+#### `clockClass`
+
+* Advertised automatically
+* `<128` = GM-capable
+* `248` = slave-only
+
+You usually **don’t set this directly**, but you must know what it means when debugging BMCA.
+
+### 3.2 Transport & profile (**common failure source**)
+
+These must match **exactly** across all nodes.
+
+#### `network_transport`
+
+```ini
+network_transport UDPv4   # most common
+# or: L2
+```
+
+Mismatch → *foreign master*, *bad message*, or silent failure.
+
+#### `delay_mechanism`
+
+```ini
+delay_mechanism E2E
+# or: P2P (gPTP / TSN)
+```
+
+* `E2E` → standard IEEE 1588
+* `P2P` → requires switch support
+
+📌 **Never mix**.
+
+#### `domainNumber`
+
+```ini
+domainNumber 0
+```
+
+* Logical PTP “network”
+* Masters and slaves **must match**
+* Multiple domains can coexist on one LAN
+
+#### `ptp_profile`
+
+```ini
+ptp_profile default
+```
+
+Profiles change message formats & expectations.
+
+⚠️ Mixing profiles = guaranteed pain.
+
+### 3.3 Timestamping & clock devices (**accuracy + stability**)
+
+#### `time_stamping`
+
+```ini
+time_stamping software
+# or: hardware
+```
+
+| Mode     | Accuracy  | Complexity |
+| -------- | --------- | ---------- |
+| software | 10–100 µs | easy       |
+| hardware | <1 µs     | harder     |
+
+Know which one you’re running and *why*.
+
+#### PHC (hardware clock) concepts
+
+Even if you don’t configure it directly, understand:
+
+* `/dev/ptp0`
+* NIC ↔ PHC mapping
+* `ethtool -T`
+
+Misunderstanding PHC = FAULTY state (`/dev/ptp-1`).
+
+### 3.4 Servo & convergence behavior (**performance tuning**)
+
+These affect **how fast and how smoothly** clocks lock.
+
+#### Servo state (`s0`, `s1`, `s2`)
+Observed in logs:
+
+```
+s0 = unlocked
+s1 = coarse
+s2 = locked
+```
+
+You want **s2 most of the time**.
+
+#### `pi_proportional_const`, `pi_integral_const`
+
+* PI servo gains
+* Rarely touched unless you:
+
+  * have oscillations
+  * do very fast sync intervals
+
+📌 Leave defaults unless you know control theory.
+
+#### `sanity_freq_limit`
+
+```ini
+sanity_freq_limit 200000000
+```
+
+* Prevents insane freq corrections
+* Important for unstable oscillators
+
+### 3.5 Message rates (**bandwidth vs responsiveness**)
+
+#### `logSyncInterval`
+
+```ini
+logSyncInterval -3   # 8 Hz
+```
+
+Actual rate = `2^logSyncInterval`.
+
+| Value | Rate  |
+| ----- | ----- |
+| 0     | 1 Hz  |
+| -3    | 8 Hz  |
+| -6    | 64 Hz |
+
+Higher rate → faster convergence, more CPU.
+
+#### `logAnnounceInterval`
+
+```ini
+logAnnounceInterval 1   # every 2s
+```
+
+Controls BMCA responsiveness.
+
+#### `logMinDelayReqInterval`
+
+Controls DELAY_REQ frequency.
+
+### 3.6 Diagnostics & observability (**debugging superpowers**)
+
+#### `verbose`
+
+```ini
+verbose 1
+```
+
+More insight into state transitions.
+
+#### PMC datasets to understand
+
+Learn these commands:
+
+```bash
+pmc -u -b 0 "GET TIME_STATUS_NP"
+pmc -u -b 0 "GET DEFAULT_DATA_SET"
+pmc -u -b 0 "GET PARENT_DATA_SET"
+pmc -u -b 0 "GET CLOCK_DESCRIPTION"
+```
+
+These tell you:
+
+* Who the GM is
+* Why BMCA chose it
+* Whether you’re locked
+
+---
+
+### 3.7 Parameters you usually (**should NOT touch**)
+
+(know them, but don’t tweak lightly)
+
+* `announceReceiptTimeout`
+* `syncReceiptTimeout`
+* `neighborPropDelayThresh`
+* `clock_servo` (unless experimenting)
+
+### 3.8 Recommended mental model
+
+Think in layers:
+
+```
+Topology (BMCA)
+   ↓
+Transport / Profile
+   ↓
+Timestamping (SW vs HW)
+   ↓
+Servo behavior
+   ↓
+Application time usage
+```
+
+Most PTP bugs happen **in the top two layers**.
+
+### 3.9 Minimal “good citizen” checklist
+
+Every node should explicitly set:
+
+```ini
+network_transport UDPv4
+delay_mechanism E2E
+domainNumber 0
+ptp_profile default
+```
+
+Every non-GM node:
+
+```ini
+slaveOnly 1
+```
+
+Every GM:
+
+```ini
+priority1 < slaves
+```
+
+## 4. Additional Information
 
 * https://botblox.io/collections/frontpage
 
