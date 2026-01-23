@@ -1,0 +1,7041 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../time-sync-using-ntp/">
+      
+      
+        <link rel="next" href="../wireshark-reference/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Time Synchronization using PTP/IEEE1588 - Ruixiang's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-H0QWC30SDQ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-H0QWC30SDQ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-H0QWC30SDQ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#time-synchronization-using-ptpieee1588" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Ruixiang&#39;s Notes" class="md-header__button md-logo" aria-label="Ruixiang's Notes" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Ruixiang's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Time Synchronization using PTP/IEEE1588
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Ruixiang&#39;s Notes" class="md-nav__button md-logo" aria-label="Ruixiang's Notes" data-md-component="logo">
+      
+  <img src="../../../assets/logo.png" alt="logo">
+
+    </a>
+    Ruixiang's Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    System
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/canbus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAN Bus in Linux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/command/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/gpg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPG Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/gpsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPSd Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/journalctl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Journalctl Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/systemd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systemd Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/tmux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tmux Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/udev-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Udev Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/v4l2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    V4L2 Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/vim-tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vim Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/docker-advanced-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Docker Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/docker-cmdref/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Command Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/docker-multi-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Multi-platform Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/docker-platform-emulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Platform Emulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/docker-special-topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Special Topics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/docker-volume-backup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Volume Backup and Restore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cloud
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cncf_projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CNCF Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/wireguard-on-aws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wireguard Setup on AWS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Network
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m-dns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mDNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../netplan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Netplan Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../network-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../network-inspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network Inspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../time-sync-using-ntp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time Synchronization using NTP and Chrony
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time Synchronization using PTP/IEEE1588
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time Synchronization using PTP/IEEE1588
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-background-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Background Information
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Background Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-how-ptp-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 How PTP works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-ptp-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 PTP profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-additional-tutorials-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Additional tutorials &amp; references
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-configure-ptp-in-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure PTP in Linux
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Configure PTP in Linux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-sofware-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Sofware packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-check-hardware-and-driver-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Check hardware and driver support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-general-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 General workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-ptp-grandmaster-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 PTP grandmaster setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 PTP grandmaster setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-configure-chrony-to-synchonize-system-time-from-the-ntp-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.1 Configure Chrony to synchonize system time from the NTP servers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-configure-phc2sys-to-synchronize-the-system-time-to-the-ptp-clock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.2 Configure phc2sys to synchronize the system time to the PTP clock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#243-set-up-ptp-clock-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.3 Set up ptp clock master
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-ptp-slave-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 PTP slave setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 PTP slave setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251-set-up-ptp-slave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.1 Set up PTP slave
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252-configure-phc2sys-to-synchronize-the-ptp-clock-to-the-system-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.2 Configure phc2sys to synchronize the PTP clock to the system time
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-check-clock-synchronization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Check clock synchronization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-key-parameters-to-tune" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Key Parameters to Tune
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Key Parameters to Tune">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-role-topology-control-bmca-related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Role &amp; topology control (BMCA-related)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 Role &amp; topology control (BMCA-related)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slaveonly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slaveOnly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority1-priority2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        priority1, priority2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clockclass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clockClass
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-transport-profile-common-failure-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Transport &amp; profile (common failure source)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Transport &amp; profile (common failure source)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network_transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        network_transport
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delay_mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delay_mechanism
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#domainnumber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        domainNumber
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ptp_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ptp_profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-timestamping-clock-devices-accuracy-stability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Timestamping &amp; clock devices (accuracy + stability)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Timestamping &amp; clock devices (accuracy + stability)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#time_stamping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        time_stamping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phc-hardware-clock-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHC (hardware clock) concepts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-servo-convergence-behavior-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Servo &amp; convergence behavior (performance tuning)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 Servo &amp; convergence behavior (performance tuning)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#servo-state-s0-s1-s2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Servo state (s0, s1, s2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pi_proportional_const-pi_integral_const" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pi_proportional_const, pi_integral_const
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sanity_freq_limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sanity_freq_limit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-message-rates-bandwidth-vs-responsiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Message rates (bandwidth vs responsiveness)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.5 Message rates (bandwidth vs responsiveness)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logsyncinterval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logSyncInterval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logannounceinterval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logAnnounceInterval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logmindelayreqinterval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logMinDelayReqInterval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-diagnostics-observability-debugging-superpowers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 Diagnostics &amp; observability (debugging superpowers)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.6 Diagnostics &amp; observability (debugging superpowers)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verbose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verbose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pmc-datasets-to-understand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PMC datasets to understand
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37-parameters-you-usually-should-not-touch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7 Parameters you usually (should NOT touch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#38-recommended-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.8 Recommended mental model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#39-minimal-good-citizen-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.9 Minimal “good citizen” checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-additional-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Additional Information
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wireshark-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wireshark Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/ssl_handshake/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSL/TLS Handshake
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/ca_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Certificate Authority Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/resource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/k3s/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3S
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hardware
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jetson
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jetson
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/jetson/boot-jetson-tx2-from-microsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boot Jetson TX2/Nano from MicroSD Card
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/jetson/flash-jetson-with-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Flash Jetson with SDK Manager in Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/jetson/flash-jetson-with-vm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Flash Jetson Device with Virtualbox
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/jetson/jetson-robotics-resource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jetson Robotics Resource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raspberrypi
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Raspberrypi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-cross-chroot-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cross-compile with Chroot and Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-install-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Docker in Raspberry Pi OS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-pican/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PiCAN2 on Raspberry Pi 3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raspberry Pi Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-rt-kernel-usb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fix USB Issue in Kernel 4.19.y-rt for Raspberry Pi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-xenomai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xenomai on Raspberry Pi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/raspberrypi/raspberrypi-zerow-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic setup for Raspberry Pi Zero W
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Beaglebone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Beaglebone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/beaglebone/beaglebone-boottime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reduce Boot Time for Beaglebone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/beaglebone/beaglebone-iio-imu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build IMU IIO driver for Pocketbeagle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/beaglebone/beaglebone-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Beaglebone Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/beaglebone/beaglebone-usb-network-share/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Share Internet through the USB Port on Pocketbeagle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/beaglebone/beaglebone-xenomai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xenomai on Beaglebone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Odroid
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Odroid
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/odroid/odroid-xu4-wireguard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Wireguard on Odroid XU4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PCB Design
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PCB Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hardware/pcb/mosfet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MOSFET Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programming
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Programming
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C++
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/cpp/cpp_language/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Language
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/cpp/compiler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Compiler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/cpp/cpp_tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/cpp/cpp_library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/cpp/cpp_doc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/python/python_resource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Resource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debugging
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Debugging
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/debugging/gdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using GDB Debugger
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/debugging/valgrind/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Valgrind
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WebRTC
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    WebRTC
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/webrtc/webrtc_connection_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WebRTC Connection Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/webrtc/webrtc_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WebRTC Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenGL
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    OpenGL
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/opengl/resource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Analytics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Video Analytics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/video_analytics/deepstream_concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DeepStream Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/video_analytics/deepstream_servicemaker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DeepStream Service Maker API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/video_analytics/gstreamer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GStreamer Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../programming/library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robotics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Robotics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modeling
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Modeling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/modeling/rigid_body_motion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rigid-body Motion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/perception/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perception
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Simulation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/simulation/simulator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/simulation/gazebo_sim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gazebo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/simulation/mujoco_sim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mujoco
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/simulation/vrep_sim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CoppeliaSim
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/simulation/geometry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ROS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros2_cli_ref/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS2 CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros2_code_sample/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS2 Code Sample
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros2_launch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS2 Launch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros2_rmw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS2 RMW
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros2_with_clion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS2 With Clion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/cyclone_dds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CycloneDDS Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros2_special_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS2 Special Topics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros_inside_docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS Inside Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/ros/ros_packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROS Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/robot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../robotics/reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Machine Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Machine Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Large Language Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HOWTOs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    HOWTOs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/check-linux-disk-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Check Linux Disk Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/cleanup-git-branch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cleanup Git Branch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/create-ssh-key/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create SSH Key
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/edit-grub-menu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Edit Grub Menu
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/fix-aws-lightsail-browser-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fix Lightsail SSH
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/fix-librt-not-found-in-jammy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fix librt.so issue on Ubuntu 22.04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/fix-rpi-locale-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fix Raspberry Pi Locale Issue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/github-multi-account-ssh-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Multi-Account SSH Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/install-ubuntu22.04-on-pc-with-nv-5080/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Ubuntu 22.04 on PC with Nvidia 50-series Graphic Card
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/nvidia-driver-with-secure-boot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NVIDIA Driver Installation with Secure Boot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/pair-bt-device-from-terminal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pair Bluetooth Device from a Terminal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/recover-stm32-swd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recover STM32 SWD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/restore-ubuntu-kernel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restore Ubuntu Kernel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/ubuntu2404-appimage-sandbox/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ubuntu 24.04 AppImage Sandbox
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howtos/xbox-controller-ubuntu-bluetooth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect Xbox One Controller to Ubuntu via Bluetooth
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resource
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resource/tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resource/course/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Course
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resource/blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tech Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resource/watchlist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tech Watchlist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resource/interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-background-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Background Information
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Background Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-how-ptp-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 How PTP works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-ptp-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 PTP profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-additional-tutorials-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Additional tutorials &amp; references
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-configure-ptp-in-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure PTP in Linux
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Configure PTP in Linux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-sofware-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Sofware packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-check-hardware-and-driver-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Check hardware and driver support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-general-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 General workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-ptp-grandmaster-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 PTP grandmaster setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 PTP grandmaster setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-configure-chrony-to-synchonize-system-time-from-the-ntp-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.1 Configure Chrony to synchonize system time from the NTP servers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-configure-phc2sys-to-synchronize-the-system-time-to-the-ptp-clock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.2 Configure phc2sys to synchronize the system time to the PTP clock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#243-set-up-ptp-clock-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.3 Set up ptp clock master
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-ptp-slave-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 PTP slave setup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 PTP slave setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251-set-up-ptp-slave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.1 Set up PTP slave
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252-configure-phc2sys-to-synchronize-the-ptp-clock-to-the-system-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.2 Configure phc2sys to synchronize the PTP clock to the system time
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-check-clock-synchronization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Check clock synchronization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-key-parameters-to-tune" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Key Parameters to Tune
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Key Parameters to Tune">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-role-topology-control-bmca-related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Role &amp; topology control (BMCA-related)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 Role &amp; topology control (BMCA-related)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slaveonly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slaveOnly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority1-priority2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        priority1, priority2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clockclass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clockClass
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-transport-profile-common-failure-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Transport &amp; profile (common failure source)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Transport &amp; profile (common failure source)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network_transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        network_transport
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delay_mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delay_mechanism
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#domainnumber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        domainNumber
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ptp_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ptp_profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-timestamping-clock-devices-accuracy-stability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Timestamping &amp; clock devices (accuracy + stability)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Timestamping &amp; clock devices (accuracy + stability)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#time_stamping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        time_stamping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phc-hardware-clock-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHC (hardware clock) concepts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-servo-convergence-behavior-performance-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Servo &amp; convergence behavior (performance tuning)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 Servo &amp; convergence behavior (performance tuning)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#servo-state-s0-s1-s2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Servo state (s0, s1, s2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pi_proportional_const-pi_integral_const" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pi_proportional_const, pi_integral_const
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sanity_freq_limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sanity_freq_limit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-message-rates-bandwidth-vs-responsiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Message rates (bandwidth vs responsiveness)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.5 Message rates (bandwidth vs responsiveness)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logsyncinterval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logSyncInterval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logannounceinterval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logAnnounceInterval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logmindelayreqinterval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        logMinDelayReqInterval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-diagnostics-observability-debugging-superpowers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 Diagnostics &amp; observability (debugging superpowers)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.6 Diagnostics &amp; observability (debugging superpowers)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verbose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verbose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pmc-datasets-to-understand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PMC datasets to understand
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37-parameters-you-usually-should-not-touch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7 Parameters you usually (should NOT touch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#38-recommended-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.8 Recommended mental model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#39-minimal-good-citizen-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.9 Minimal “good citizen” checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-additional-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Additional Information
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../linux/canbus/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    System
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../m-dns/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Network
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="time-synchronization-using-ptpieee1588">Time Synchronization using PTP/IEEE1588</h1>
+<p>For a complicated robotic system, there may be multiple onboard computers and sensors working together to have the whole system functional. To ensure the data from different devices are synchronized in time, you may need to consider time synchronization among the devices. PTP is a synchronization protocol designed for this purpose and it allows sub-microsecond accuracy if properly configured. One example usage of PTP time synchronization is setting up an Ouster OS1-64 Lidar on a mobile robot for 3D mapping and navigation. To get the right timestamp for the pointcloud to be used with other parts of ROS stack, such as mapping and localization, a PTP grandmaster can be configured on the navigation computer to synchronize the time between Lidar and the computer.</p>
+<h2 id="1-background-information">1. Background Information</h2>
+<h3 id="11-how-ptp-works">1.1 How PTP works</h3>
+<p>Here are some good references:</p>
+<ul>
+<li><a href="https://www.alliedtelesis.com/sites/default/files/ptp_feature_overview_guide_rev_a.pdf">AlliedTelesis Doc: Precision Time Protocol &amp; Transparent Clock</a></li>
+<li><a href="https://www.nettimelogic.com/resources/PTP%20Basics.pdf">NetTimeLogic Doc: PTP Basics</a></li>
+</ul>
+<p>You can either use a dedicated PTP grand master hardware or set up a Linux computer to act as the master. In this note, we mainly consider the latter case. </p>
+<h3 id="12-ptp-profiles">1.2 PTP profiles</h3>
+<p>The following table is taken from [4] by peci1 published on ROS Discourse:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Profile</th>
+<th style="text-align: center;">BMCA</th>
+<th style="text-align: center;">Delay mech.</th>
+<th style="text-align: center;">Layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Default</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">P2P/E2E</td>
+<td style="text-align: center;">L2/L3</td>
+</tr>
+<tr>
+<td style="text-align: center;">gPTP (802.1AS) 17</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">P2P</td>
+<td style="text-align: center;">L2</td>
+</tr>
+<tr>
+<td style="text-align: center;">Automotive        10</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">P2P</td>
+<td style="text-align: center;">L2</td>
+</tr>
+<tr>
+<td style="text-align: center;">Autosar 9</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">P2P</td>
+<td style="text-align: center;">L2</td>
+</tr>
+<tr>
+<td style="text-align: center;">LXI 1</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">P2P</td>
+<td style="text-align: center;">L3</td>
+</tr>
+<tr>
+<td style="text-align: center;">IEC 62439-3 L2P2P</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">P2P</td>
+<td style="text-align: center;">L2</td>
+</tr>
+<tr>
+<td style="text-align: center;">IEC 62439-3 L3E2E</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">E2E</td>
+<td style="text-align: center;">L3</td>
+</tr>
+<tr>
+<td style="text-align: center;">Power Profile</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">P2P</td>
+<td style="text-align: center;">L2</td>
+</tr>
+<tr>
+<td style="text-align: center;">GigE Vision 11</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">P2P/E2E</td>
+<td style="text-align: center;">?</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The <code>default</code> profile is most commonly supported and used by computers and sensors on the robot</li>
+<li>The <code>gPTP</code> profile has more strict requirements in the setup (for both the devices and network switches)</li>
+</ul>
+<h3 id="13-additional-tutorials-references">1.3 Additional tutorials &amp; references</h3>
+<ul>
+<li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/ch-configuring_ptp_using_ptp4l">Redhat Doc: Configuring PTP Using ptp4l</a></li>
+<li><a href="https://manpages.ubuntu.com/manpages/focal/en/man8/ptp4l.8.html">ptp4l (manual)</a></li>
+<li><a href="https://manpages.ubuntu.com/manpages/focal/en/man8/phc2sys.8.html">phc2sys (manual)</a></li>
+<li><a href="https://static.ouster.dev/sensor-docs/image_route1/image_route3/appendix/ptp-quickstart.html">Ouster PTP Reference</a></li>
+<li><a href="https://github.com/jclark/rpi-cm4-ptp-guide">PTP support in the Raspberry Pi CM4 and CM5</a></li>
+<li><a href="https://tsn.readthedocs.io/index.html">TSN Documentation Project for Linux</a></li>
+<li><a href="https://github.com/jclark/rpi-cm4-ptp-guide">Raspberry Pi CM4 PTP Guide</a></li>
+</ul>
+<h2 id="2-configure-ptp-in-linux">2. Configure PTP in Linux</h2>
+<h3 id="21-sofware-packages">2.1 Sofware packages</h3>
+<p>You may use <code>ethtool</code>, <code>linuxptp</code> and <code>chrony</code> in the setup. They can be installed from apt-get directly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">## install the packages</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ethtool<span class="w"> </span>linuxptp<span class="w"> </span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1">## only install if needed</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>chrony
+</code></pre></div>
+<p>The following list is taken from the Ouster documentation to give you a brief idea of the functions of the packages:</p>
+<ul>
+<li><strong>ethtool</strong> - A tool to query the hardware and driver capabilities of a given Ethernet interface.</li>
+<li><strong>linuxptp</strong> - Linux PTP package with the following components:<ul>
+<li><strong>ptp4l</strong> daemon to manage hardware and participate as a PTP node</li>
+<li><strong>phc2sys</strong> to synchronize the Ethernet controller’s hardware clock to the Linux system clock or shared memory region</li>
+<li><strong>pmc</strong> to query the PTP nodes on the network.</li>
+<li><strong>ts2phc</strong> to synchronize PTP Hardware Clocks (PHC) to external time stamp signals.</li>
+</ul>
+</li>
+<li><strong>chrony</strong> - A NTP and PTP time synchronization daemon. It can be configured to listen to both NTP time sources via the Internet and a PTP master clock such as one provided by a GPS with PTP support. This will validate the time configuration makes sense given multiple time sources.</li>
+</ul>
+<h3 id="22-check-hardware-and-driver-support">2.2 Check hardware and driver support</h3>
+<p>You can use the following command to check the hardware and driver support of the network interface:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>ethtool<span class="w"> </span>-T<span class="w"> </span>eth0
+</code></pre></div>
+<p>Ideally the ethernet adapter and driver should support hardware timestamp. You may get something like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Time stamping parameters for eth0:
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Capabilities:
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    hardware-transmit     (SOF_TIMESTAMPING_TX_HARDWARE)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    software-transmit     (SOF_TIMESTAMPING_TX_SOFTWARE)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    hardware-receive      (SOF_TIMESTAMPING_RX_HARDWARE)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    software-receive      (SOF_TIMESTAMPING_RX_SOFTWARE)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    software-system-clock (SOF_TIMESTAMPING_SOFTWARE)
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    hardware-raw-clock    (SOF_TIMESTAMPING_RAW_HARDWARE)
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>PTP Hardware Clock: 0
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Hardware Transmit Timestamp Modes:
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    off                   (HWTSTAMP_TX_OFF)
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    on                    (HWTSTAMP_TX_ON)
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    one-step-sync         (HWTSTAMP_TX_ONESTEP_SYNC)
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>Hardware Receive Filter Modes:
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    none                  (HWTSTAMP_FILTER_NONE)
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    ptpv1-l4-sync         (HWTSTAMP_FILTER_PTP_V1_L4_SYNC)
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    ptpv1-l4-delay-req    (HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ)
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    ptpv2-l4-sync         (HWTSTAMP_FILTER_PTP_V2_L4_SYNC)
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    ptpv2-l4-delay-req    (HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ)
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    ptpv2-l2-sync         (HWTSTAMP_FILTER_PTP_V2_L2_SYNC)
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    ptpv2-l2-delay-req    (HWTSTAMP_FILTER_PTP_V2_L2_DELAY_REQ)
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    ptpv2-event           (HWTSTAMP_FILTER_PTP_V2_EVENT)
+</code></pre></div>
+<p>Otherwise if only software timestamp is support, you may see</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Time stamping parameters for eth0:
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Capabilities:
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    software-transmit
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    software-receive
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    software-system-clock
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>PTP Hardware Clock: none
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Hardware Transmit Timestamp Modes: none
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>Hardware Receive Filter Modes: none
+</code></pre></div>
+<h3 id="23-general-workflow">2.3 General workflow</h3>
+<p>In general, what we try to achieve in time synchronization for devices within a robot include:</p>
+<ul>
+<li>all these devices share the same time base after synchronization (with bounded time offset)</li>
+<li>the system time on all devices should not jump backwards (monotonically increasing)</li>
+</ul>
+<p>The general synchonization setup is illustrated as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>              [ Internet NTP Servers (optional) ]
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                             |
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>                             v
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        +-----------------------------------------------+
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        |          🧠 PTP Grandmaster Node              |
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        | (Main onboard PC with PHC-capable NIC)   |
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        | ---------------------------------------- |
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        |                                          |
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        | 1. Chrony disciplines CLOCK_REALTIME     |
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>        | - One-time step (makestep 1.0 1)         |
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>        | - Then slews slowly to avoid jumps       |
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>        |                                          |
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>        | 2. phc2sys pushes CLOCK_REALTIME to PHC: |
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>        | phc2sys -w -s CLOCK_REALTIME -c eth0     |
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>        | -&gt; Ensures PHC stays aligned to system   |
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>        |                                          |
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>        | 3. ptp4l advertises PHC to PTP network:  |
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>        | ptp4l -i eth0 -f /etc/ptp4l.conf         |
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>        | -&gt; Acts as Grandmaster                   |
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>        +-----------------------------------------------+
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>                             |
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>                             |   (PTP over Ethernet)
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>                             v
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>        +-----------------------------------------------+
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>        | 🧩 PTP Slave Nodes (Aux PCs, Jetsons)     |
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>        | ---------------------------------------- |
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>        |                                          |
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>        | 1. ptp4l syncs PHC from Grandmaster:     |
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>        | ptp4l -s -i eth0                         |
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a>        |                                          |
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a>        | 2. phc2sys updates system clock:         |
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a>        | phc2sys -w -s eth0 -c CLOCK_REALTIME     |
+<a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>        |                                          |
+<a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a>        | -&gt; CLOCK_REALTIME is now aligned with GM |
+<a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a>        +-----------------------------------------------+
+<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>                             |
+<a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a>                             v
+<a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a>        +-----------------------------------------------+
+<a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a>        |        🎥 Sensors with PTP support (optional) |
+<a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a>        | (e.g., Ouster LiDAR, FLIR cameras)            |
+<a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a>        | --------------------------------------------- |
+<a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a>        | Internal PTP slave logic or hardware          |
+<a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a>        | syncs device clock from network               |
+<a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a>        | -&gt; Ensures timestamps align with robot clocks |
+<a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a>        +-----------------------------------------------+
+</code></pre></div>
+<h3 id="24-ptp-grandmaster-setup">2.4 PTP grandmaster setup</h3>
+<h4 id="241-configure-chrony-to-synchonize-system-time-from-the-ntp-servers">2.4.1 Configure Chrony to synchonize system time from the NTP servers</h4>
+<p>This step is optional as all devices can still work with a local time base. But in most cases, we may want the robot system to use the correct global time for convenience (e.g. when checking and retrieving logs from the robot). This can be achived with Chrony. </p>
+<p>Edit <code>/etc/chrony/chrony.conf</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a># Step the system clock instead of slewing it if the adjustment is larger than
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a># one second, but only in the first clock update (default 3 =&gt; 1).
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>makestep 1 1
+</code></pre></div>
+<p>The main change we make is to make sure chony only steps once at the start (before the robot starts working) to avoid the system time to jump backwards.</p>
+<p>You can use the following commands to check the chrony synchonization status:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>$<span class="w"> </span>chronyc<span class="w"> </span>tracking
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>$<span class="w"> </span>chronyc<span class="w"> </span>sources<span class="w"> </span>-v
+</code></pre></div>
+<h4 id="242-configure-phc2sys-to-synchronize-the-system-time-to-the-ptp-clock">2.4.2 Configure phc2sys to synchronize the system time to the PTP clock</h4>
+<p>This step synchonizes time from the system clock to the PHC. Otherwise, the initial value of the PHC time is undefined that you may see nonsense values from it. You can check the system time and PHC time with the following commands: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># system time</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>$<span class="w"> </span>date
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># PHC time on eth0</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>$<span class="w"> </span>sudo<span class="w"> </span>phc_ctl<span class="w"> </span>eth0<span class="w"> </span>get
+</code></pre></div>
+<ol>
+<li>
+<p>Create a systemd service for phc2sys: /etc/systemd/system/phc2sys.service</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>[Unit]
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Description=Synchronize system clock or PTP hardware clock (PHC)
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>Documentation=man:phc2sys
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>Requires=ptp4l.service
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>After=chrony.service ptp4l.service
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>[Service]
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a># -s: master clock, -c: slave clock
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>ExecStart=/usr/sbin/phc2sys -s CLOCK_REALTIME -c eth0 -w
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>Restart=on-failure
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>RestartSec=2
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>[Install]
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>WantedBy=multi-user.target
+</code></pre></div>
+<p>The <code>-w</code> argument instructs phc2sys to get the TAI-UTC offset from the kernel, so leap seconds are handled automatically.</p>
+</li>
+<li>
+<p>Start and enable the phc2sys service</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>$ sudo systemctl daemon-reload
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>$ sudo systemctl start phc2sys.service
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a># if you get no errors starting the service
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>$ sudo systemctl enable phc2sys.service
+</code></pre></div>
+<p>You will see phc2sys starts waiting for ptp4l as it the ptp4l service to set up everything in order for it to acquire the TAI-UTC offset properly. Proceed to the next step first.</p>
+</li>
+</ol>
+<h4 id="243-set-up-ptp-clock-master">2.4.3 Set up ptp clock master</h4>
+<ol>
+<li>
+<p>Update the configuration file /etc/linuxptp/ptp4l.conf</p>
+<p>If you're setting  up a master clock, change the following lines:</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>#clockClass     248
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>clockClass      128
+</code></pre></div>
+clockClass with a value of 128 indicates that the clock you're setting up is free-running and not synchonized to an external reference source (e.g. GPS time)</p>
+<p>If you have multiple network intefaces on the computer and you want the computer to act as a boundary clock:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>  # at very bottom of the file
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>boundary_clock_jbod 1
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>[eth0]
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>[eth1]
+</code></pre></div>
+Typically you won't need this configuration as it only gives you multiple isolated PTP networks (where the name "boundary" is from). </p>
+<p>If what you really want is to synchonize time bewteen the interfaces, you still need to further configure the time using <code>phc2sys</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># e.g. set eth0 time to eth1</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>phc2sys<span class="w"> </span>-w<span class="w"> </span>-s<span class="w"> </span>eth0<span class="w"> </span>-c<span class="w"> </span>eth1
+</code></pre></div>
+</li>
+<li>
+<p>Create a systemd service for ptp4l: /etc/systemd/system/ptp4l.service</p>
+<p>Make sure you update the interface name in the <code>-i eth0</code> part</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>[Unit]
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>Description=ptp4l service
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Requires=network-online.target
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>After=network-online.target
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>[Service]
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>ExecStart=/usr/sbin/ptp4l -i eth0 -f /etc/linuxptp/ptp4l.conf
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>Restart=on-failure
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>RestartSec=2
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>[Install]
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>WantedBy=multi-user.target
+</code></pre></div>
+</li>
+<li>
+<p>Start and enable the ptp4l service</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>$ sudo systemctl daemon-reload
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>$ sudo systemctl start ptp4l.service
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a># if you get no errors starting the service
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>$ sudo systemctl enable ptp4l.service
+</code></pre></div>
+</li>
+</ol>
+<h3 id="25-ptp-slave-setup">2.5 PTP slave setup</h3>
+<h4 id="251-set-up-ptp-slave">2.5.1 Set up PTP slave</h4>
+<ol>
+<li>
+<p>Update the configuration file /etc/linuxptp/ptp4l.conf</p>
+<p>If you're setting up a slave device, change the following lines:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>#slaveOnly              0
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>slaveOnly               1
+</code></pre></div></p>
+</li>
+<li>
+<p>Create a systemd service for ptp4l: /etc/systemd/system/ptp4l.service</p>
+<p>Make sure you update the interface name in the <code>-i eth0</code> part</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>[Unit]
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Description=ptp4l service
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Requires=network-online.target
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>After=network-online.target
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>[Service]
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>ExecStart=/usr/sbin/ptp4l -i eth0 -f /etc/linuxptp/ptp4l.conf
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>Restart=on-failure
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>RestartSec=2
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>[Install]
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>WantedBy=multi-user.target
+</code></pre></div>
+</li>
+<li>
+<p>Start and enable the ptp4l service</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>$ sudo systemctl daemon-reload
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>$ sudo systemctl start ptp4l.service
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a># if you get no errors starting the service
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>$ sudo systemctl enable ptp4l.service
+</code></pre></div>
+</li>
+</ol>
+<h4 id="252-configure-phc2sys-to-synchronize-the-ptp-clock-to-the-system-time">2.5.2 Configure phc2sys to synchronize the PTP clock to the system time</h4>
+<ol>
+<li>
+<p>Create a systemd service for phc2sys: /etc/systemd/system/phc2sys.service</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>[Unit]
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>Description=Synchronize system clock or PTP hardware clock (PHC)
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>Documentation=man:phc2sys
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>Requires=ptp4l.service
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>After=ptp4l.service
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>[Service]
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>ExecStart=/usr/sbin/phc2sys -w -s eth0 -c CLOCK_REALTIME
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>Restart=on-failure
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>RestartSec=2
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>[Install]
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>WantedBy=multi-user.target
+</code></pre></div>
+</li>
+<li>
+<p>Start and enable the phc2sys service</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>$ sudo systemctl daemon-reload
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>$ sudo systemctl start phc2sys.service
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a># if you get no errors starting the service
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>$ sudo systemctl enable phc2sys.service
+</code></pre></div>
+</li>
+<li>
+<p>Make sure you have disabled all NTP clients that may change the system clock</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>chrony
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>systemd-timesyncd
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>ntp
+</code></pre></div>
+</li>
+</ol>
+<h3 id="26-check-clock-synchronization">2.6 Check clock synchronization</h3>
+<ul>
+<li>
+<p>Check time synchronization between PHC and the Grandmaster clock (on PTP slave)</p>
+<p>Look at output of the <strong>ptp4l</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>ptp4l[5374018.735]: rms  787 max 1208 freq -38601 +/- 1071 delay  -14 +/-   0
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>ptp4l[5374019.735]: rms 1314 max 1380 freq -36204 +/- 346 delay   -14 +/-   0
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>ptp4l[5374020.735]: rms  836 max 1106 freq -35734 +/-  31 delay   -14 +/-   0
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>ptp4l[5374021.736]: rms  273 max  450 freq -35984 +/-  97 delay   -14 +/-   0
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>ptp4l[5374022.736]: rms   50 max   82 freq -36271 +/-  64 delay   -14 +/-   0
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>ptp4l[5374023.736]: rms   81 max   86 freq -36413 +/-  17 delay   -14 +/-   0
+</code></pre></div>
+</li>
+</ul>
+<p><strong>Units</strong>: rms/max: nanoseconds (ns), freq: parts per billion (ppb), delay: nanoseconds (ns)</p>
+<ul>
+<li>
+<p>Check time synchronization between the PHC and the system clock</p>
+<p>Look at output of the <strong>phc2sys</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>phc2sys[5374168.545]: CLOCK_REALTIME phc offset   -372582 s0 freq    +246 delay   6649
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>phc2sys[5374169.545]: CLOCK_REALTIME phc offset   -372832 s1 freq      -4 delay   6673
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>phc2sys[5374170.547]: CLOCK_REALTIME phc offset        68 s2 freq     +64 delay   6640
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>phc2sys[5374171.547]: CLOCK_REALTIME phc offset       -20 s2 freq      -3 delay   6687
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>phc2sys[5374172.547]: CLOCK_REALTIME phc offset        47 s2 freq     +58 delay   6619
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>phc2sys[5374173.548]: CLOCK_REALTIME phc offset       -40 s2 freq     -15 delay   6680
+</code></pre></div>
+</li>
+</ul>
+<p><strong>Units</strong>: offset: nanoseconds (ns), freq: parts per billion (ppb), delay: nanoseconds (ns)</p>
+<ul>
+<li>
+<p>Typical ranges of the synchronization accuracy you may expect:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Software TimeStamps</th>
+<th>Hardware TimeStamps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Offset</td>
+<td>10–100 µs</td>
+<td>&lt;1 µs</td>
+</tr>
+<tr>
+<td>Path delay</td>
+<td>50–300 µs</td>
+<td>&lt;10 µs</td>
+</tr>
+<tr>
+<td>Freq correction</td>
+<td>±10–50 ppm</td>
+<td>±1 ppm</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<p><strong>Units</strong>: 1 µs = 1000 ns, 1 ppm = 1000 ppb</p>
+<p>More information about clock synchronization check can be found from [6].</p>
+<h2 id="3-key-parameters-to-tune">3. Key Parameters to Tune</h2>
+<h3 id="31-role-topology-control-bmca-related">3.1 Role &amp; topology control (BMCA-related)</h3>
+<p>These decide <strong>who becomes master</strong> and prevent “everyone is GM” disasters.</p>
+<p><strong>Best practice</strong></p>
+<ul>
+<li>Explicitly set these everywhere</li>
+<li>Don’t rely on defaults</li>
+</ul>
+<h4 id="slaveonly"><code>slaveOnly</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="na">slaveOnly 1   # force this node to never be GM</span>
+</code></pre></div>
+<ul>
+<li><strong>Most important safety switch</strong></li>
+<li>Use on <em>all</em> non-GM nodes</li>
+<li>Prevents accidental GM election</li>
+</ul>
+<h4 id="priority1-priority2"><code>priority1</code>, <code>priority2</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="na">priority1 100</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="na">priority2 100</span>
+</code></pre></div>
+<p>BMCA ranking order (simplified):</p>
+<ol>
+<li><code>priority1</code></li>
+<li>clockClass</li>
+<li>clockAccuracy</li>
+<li><code>priority2</code></li>
+<li>clockIdentity</li>
+</ol>
+<p>Lower = better.</p>
+<h4 id="clockclass"><code>clockClass</code></h4>
+<ul>
+<li>Advertised automatically</li>
+<li><code>&lt;128</code> = GM-capable</li>
+<li><code>248</code> = slave-only</li>
+</ul>
+<p>You usually <strong>don’t set this directly</strong>, but you must know what it means when debugging BMCA.</p>
+<h3 id="32-transport-profile-common-failure-source">3.2 Transport &amp; profile (<strong>common failure source</strong>)</h3>
+<p>These must match <strong>exactly</strong> across all nodes.</p>
+<h4 id="network_transport"><code>network_transport</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="na">network_transport UDPv4   # most common</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="c1"># or: L2</span>
+</code></pre></div>
+<p>Mismatch → <em>foreign master</em>, <em>bad message</em>, or silent failure.</p>
+<h4 id="delay_mechanism"><code>delay_mechanism</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="na">delay_mechanism E2E</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="c1"># or: P2P (gPTP / TSN)</span>
+</code></pre></div>
+<ul>
+<li><code>E2E</code> → standard IEEE 1588</li>
+<li><code>P2P</code> → requires switch support</li>
+</ul>
+<p>📌 <strong>Never mix</strong>.</p>
+<h4 id="domainnumber"><code>domainNumber</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="na">domainNumber 0</span>
+</code></pre></div>
+<ul>
+<li>Logical PTP “network”</li>
+<li>Masters and slaves <strong>must match</strong></li>
+<li>Multiple domains can coexist on one LAN</li>
+</ul>
+<h4 id="ptp_profile"><code>ptp_profile</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="na">ptp_profile default</span>
+</code></pre></div>
+<p>Profiles change message formats &amp; expectations.</p>
+<p>⚠️ Mixing profiles = guaranteed pain.</p>
+<h3 id="33-timestamping-clock-devices-accuracy-stability">3.3 Timestamping &amp; clock devices (<strong>accuracy + stability</strong>)</h3>
+<h4 id="time_stamping"><code>time_stamping</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="na">time_stamping software</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c1"># or: hardware</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Accuracy</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>software</td>
+<td>10–100 µs</td>
+<td>easy</td>
+</tr>
+<tr>
+<td>hardware</td>
+<td>&lt;1 µs</td>
+<td>harder</td>
+</tr>
+</tbody>
+</table>
+<p>Know which one you’re running and <em>why</em>.</p>
+<h4 id="phc-hardware-clock-concepts">PHC (hardware clock) concepts</h4>
+<p>Even if you don’t configure it directly, understand:</p>
+<ul>
+<li><code>/dev/ptp0</code></li>
+<li>NIC ↔ PHC mapping</li>
+<li><code>ethtool -T</code></li>
+</ul>
+<p>Misunderstanding PHC = FAULTY state (<code>/dev/ptp-1</code>).</p>
+<h3 id="34-servo-convergence-behavior-performance-tuning">3.4 Servo &amp; convergence behavior (<strong>performance tuning</strong>)</h3>
+<p>These affect <strong>how fast and how smoothly</strong> clocks lock.</p>
+<h4 id="servo-state-s0-s1-s2">Servo state (<code>s0</code>, <code>s1</code>, <code>s2</code>)</h4>
+<p>Observed in logs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>s0 = unlocked
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>s1 = coarse
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>s2 = locked
+</code></pre></div>
+<p>You want <strong>s2 most of the time</strong>.</p>
+<h4 id="pi_proportional_const-pi_integral_const"><code>pi_proportional_const</code>, <code>pi_integral_const</code></h4>
+<ul>
+<li>PI servo gains</li>
+<li>
+<p>Rarely touched unless you:</p>
+</li>
+<li>
+<p>have oscillations</p>
+</li>
+<li>do very fast sync intervals</li>
+</ul>
+<p>📌 Leave defaults unless you know control theory.</p>
+<h4 id="sanity_freq_limit"><code>sanity_freq_limit</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="na">sanity_freq_limit 200000000</span>
+</code></pre></div>
+<ul>
+<li>Prevents insane freq corrections</li>
+<li>Important for unstable oscillators</li>
+</ul>
+<h3 id="35-message-rates-bandwidth-vs-responsiveness">3.5 Message rates (<strong>bandwidth vs responsiveness</strong>)</h3>
+<h4 id="logsyncinterval"><code>logSyncInterval</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="na">logSyncInterval -3   # 8 Hz</span>
+</code></pre></div>
+<p>Actual rate = <code>2^logSyncInterval</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1 Hz</td>
+</tr>
+<tr>
+<td>-3</td>
+<td>8 Hz</td>
+</tr>
+<tr>
+<td>-6</td>
+<td>64 Hz</td>
+</tr>
+</tbody>
+</table>
+<p>Higher rate → faster convergence, more CPU.</p>
+<h4 id="logannounceinterval"><code>logAnnounceInterval</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="na">logAnnounceInterval 1   # every 2s</span>
+</code></pre></div>
+<p>Controls BMCA responsiveness.</p>
+<h4 id="logmindelayreqinterval"><code>logMinDelayReqInterval</code></h4>
+<p>Controls DELAY_REQ frequency.</p>
+<h3 id="36-diagnostics-observability-debugging-superpowers">3.6 Diagnostics &amp; observability (<strong>debugging superpowers</strong>)</h3>
+<h4 id="verbose"><code>verbose</code></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="na">verbose 1</span>
+</code></pre></div>
+<p>More insight into state transitions.</p>
+<h4 id="pmc-datasets-to-understand">PMC datasets to understand</h4>
+<p>Learn these commands:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>pmc<span class="w"> </span>-u<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="s2">&quot;GET TIME_STATUS_NP&quot;</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>pmc<span class="w"> </span>-u<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="s2">&quot;GET DEFAULT_DATA_SET&quot;</span>
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>pmc<span class="w"> </span>-u<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="s2">&quot;GET PARENT_DATA_SET&quot;</span>
+<a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>pmc<span class="w"> </span>-u<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="s2">&quot;GET CLOCK_DESCRIPTION&quot;</span>
+</code></pre></div>
+<p>These tell you:</p>
+<ul>
+<li>Who the GM is</li>
+<li>Why BMCA chose it</li>
+<li>Whether you’re locked</li>
+</ul>
+<hr />
+<h3 id="37-parameters-you-usually-should-not-touch">3.7 Parameters you usually (<strong>should NOT touch</strong>)</h3>
+<p>(know them, but don’t tweak lightly)</p>
+<ul>
+<li><code>announceReceiptTimeout</code></li>
+<li><code>syncReceiptTimeout</code></li>
+<li><code>neighborPropDelayThresh</code></li>
+<li><code>clock_servo</code> (unless experimenting)</li>
+</ul>
+<h3 id="38-recommended-mental-model">3.8 Recommended mental model</h3>
+<p>Think in layers:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>Topology (BMCA)
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>   ↓
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>Transport / Profile
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>   ↓
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>Timestamping (SW vs HW)
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>   ↓
+<a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>Servo behavior
+<a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>   ↓
+<a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>Application time usage
+</code></pre></div>
+<p>Most PTP bugs happen <strong>in the top two layers</strong>.</p>
+<h3 id="39-minimal-good-citizen-checklist">3.9 Minimal “good citizen” checklist</h3>
+<p>Every node should explicitly set:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="na">network_transport UDPv4</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="na">delay_mechanism E2E</span>
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="na">domainNumber 0</span>
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="na">ptp_profile default</span>
+</code></pre></div>
+<p>Every non-GM node:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="na">slaveOnly 1</span>
+</code></pre></div>
+<p>Every GM:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="na">priority1 &lt; slaves</span>
+</code></pre></div>
+<h2 id="4-additional-information">4. Additional Information</h2>
+<ul>
+<li>https://botblox.io/collections/frontpage</li>
+</ul>
+<h2 id="reference">Reference</h2>
+<ul>
+<li>[1] <a href="https://static.ouster.dev/sensor-docs/index.html">Ouster Sensor Docs (wiki)</a></li>
+<li>[2] <a href="https://data.ouster.io/downloads/software-user-manual/software-user-manual-v2p0.pdf">Ouster Lidar Software User Manual</a></li>
+<li>[3] <a href="https://discourse.ros.org/t/experience-with-ptp-precision-time-protocol-for-mobile-robots/24707">PTP for Mobile Robots</a></li>
+<li>[4] <a href="https://www.redhat.com/en/blog/combining-ptp-ntp-get-best-both-worlds">Combining PTP with NTP to Get the Best of Both Worlds</a> </li>
+<li>[5] <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/sec-synchronize_to_ptp_or_ntp_time_using_timemaster">Synchronize to PTP or NTP Time Using timemaster</a></li>
+<li>[6] <a href="https://tsn.readthedocs.io/timesync.html#checking-clocks-synchronization">Synchronizing Time with Linux PTP</a></li>
+<li>[7] <a href="https://discourse.ros.org/t/multi-robot-coordination-distributed-synchronization-of-industrial-robots-through-ros-2/9288">Multi-robot coordination: Distributed synchronization of industrial robots through ROS 2</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["optimize", "navigation.instant", "navigation.tracking", "navigation.path", "navigation.top", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
